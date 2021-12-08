@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <title>Collection Portal</title>
+    <base href="/">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90680653-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90680653-2');
+    </script>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <!-- Meta -->
+    <meta name="description" content="Heritage Bank Compilation App">
+    <meta name="author" content="Heritage Bank">
+
+    <title>Collection Portal</title>
+
+
+    <!-- vendor css -->
+    <link href="assets/lib/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="assets/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="assets/lib/typicons.font/typicons.css" rel="stylesheet">
+    <link href="assets/lib/jqvmap/jqvmap.min.css" rel="stylesheet">
+    <link href="assets/lib/select2/css/select2.min.css" rel="stylesheet">
+
+    <link href="assets/lib/lightslider/css/lightslider.min.css" rel="stylesheet">
+    <link href="assets/lib/cryptofont/css/cryptofont.min.css" rel="stylesheet">
+
+    <!-- azia CSS -->
+    <link rel="stylesheet" href="assets/css/azia.css">
+
+</head>
+
+<body class="az-body az-body-dashboard-nine">
+    <app-root></app-root>
+
+
+    <!-- <div class="az-footer ht-40">
+      <div class="container-fluid pd-t-0-f ht-100p">
+        <span style="padding-left: 555px;">&copy; 2018 Azia Responsive Bootstrap 4 Dashboard Template</span>
+      </div>
+    </div> -->
+
+    <script src="assets/lib/jquery/jquery.min.js"></script>
+    <script src="assets/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/lib/ionicons/ionicons.js"></script>
+    <script src="assets/lib/jquery.flot/jquery.flot.js"></script>
+    <script src="assets/lib/jquery.flot/jquery.flot.resize.js"></script>
+    <script src="assets/lib/select2/js/select2.min.js"></script>
+    <script src="assets/lib/chart.js/Chart.bundle.min.js"></script>
+
+    <script src="assets/lib/jqvmap/jquery.vmap.min.js"></script>
+    <script src="assets/lib/jqvmap/maps/jquery.vmap.world.js"></script>
+    <script src="assets/lib/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+
+    <script src="assets/lib/jquery-steps/jquery.steps.min.js"></script>
+    <script src="assets/lib/parsleyjs/parsley.min.js"></script>
+
+    <script src="assets/js/azia.js"></script>
+    <script src="assets/js/chart.flot.sampledata.js"></script>
+
+    <script src="/lib/lightslider/js/lightslider.min.js"></script>
+    <!-- DASHBOARD -->
+    <script src="assets/js/dashboard.sampledata.js"></script>
+    <script src="assets/lib/jquery.flot/jquery.flot.categories.js"></script>
+    <script src="assets/lib/flot.curvedlines/curvedLines.js"></script>
+
+    <script>
+        $(function() {
+            'use strict'
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // colored tooltip
+            $('[data-toggle="tooltip-primary"]').tooltip({
+                template: '<div class="tooltip tooltip-primary" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
+            });
+
+            $('[data-toggle="tooltip-secondary"]').tooltip({
+                template: '<div class="tooltip tooltip-secondary" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
+            });
+
+        });
+    </script>
+    <script>
+        $("#single").select2({
+            placeholder: "Select a programming language",
+            allowClear: true
+        });
+        $("#multiple").select2({
+            placeholder: "Select a programming language",
+            allowClear: true,
+            maximumSelectionLength: 2
+        });
+    </script>
+
+
+    <script>
+        // Additional code for adding placeholder in search box of select2
+        (function($) {
+            var Defaults = $.fn.select2.amd.require('select2/defaults');
+
+            $.extend(Defaults.defaults, {
+                searchInputPlaceholder: ''
+            });
+
+            var SearchDropdown = $.fn.select2.amd.require('select2/dropdown/search');
+
+            var _renderSearchDropdown = SearchDropdown.prototype.render;
+
+            SearchDropdown.prototype.render = function(decorated) {
+
+                // invoke parent method
+                var $rendered = _renderSearchDropdown.apply(this, Array.prototype.slice.apply(arguments));
+
+                this.$search.attr('placeholder', this.options.get('searchInputPlaceholder'));
+
+                return $rendered;
+            };
+
+        })(window.jQuery);
+    </script>
+    <script>
+        $(function() {
+            'use strict'
+
+            $('#example1').DataTable({
+                language: {
+                    searchPlaceholder: 'Search...',
+                    sSearch: '',
+                    lengthMenu: '_MENU_ items/page',
+                }
+            });
+
+            $('#example2').DataTable({
+                responsive: true,
+                language: {
+                    searchPlaceholder: 'Search...',
+                    sSearch: '',
+                    lengthMenu: '_MENU_ items/page',
+                }
+            });
+
+            // Select2
+            $('.dataTables_length select').select2({
+                minimumResultsForSearch: Infinity
+            });
+
+        });
+    </script>
+
+
+    <script>
+        $(function() {
+            'use strict'
+
+            $('.az-sidebar .with-sub').on('click', function(e) {
+                e.preventDefault();
+                $(this).parent().toggleClass('show');
+                $(this).parent().siblings().removeClass('show');
+            })
+
+            $(document).on('click touchstart', function(e) {
+                e.stopPropagation();
+
+                // closing of sidebar menu when clicking outside of it
+                if (!$(e.target).closest('.az-header-menu-icon').length) {
+                    var sidebarTarg = $(e.target).closest('.az-sidebar').length;
+                    if (!sidebarTarg) {
+                        $('body').removeClass('az-sidebar-show');
+                    }
+                }
+            });
+
+
+            $('#azSidebarToggle').on('click', function(e) {
+                e.preventDefault();
+
+                if (window.matchMedia('(min-width: 992px)').matches) {
+                    $('body').toggleClass('az-sidebar-hide');
+                } else {
+                    $('body').toggleClass('az-sidebar-show');
+                }
+            });
+
+            new PerfectScrollbar('.az-sidebar-body', {
+                suppressScrollX: true
+            });
+
+            $(document).ready(function() {
+                $('.select2').select2({
+                    placeholder: 'Select',
+                    searchInputPlaceholder: 'Search'
+                });
+
+                $('.select2-no-search').select2({
+                    minimumResultsForSearch: Infinity,
+                    placeholder: 'Select'
+                });
+            });
+
+            /* ----------------------------------- */
+            /* Dashboard content */
+
+
+            $.plot('#flotChart1', [{
+                data: dashData1,
+                color: '#6f42c1'
+            }], {
+                series: {
+                    shadowSize: 0,
+                    lines: {
+                        show: true,
+                        lineWidth: 2,
+                        fill: true,
+                        fillColor: {
+                            colors: [{
+                                opacity: 0
+                            }, {
+                                opacity: 1
+                            }]
+                        }
+                    }
+                },
+                grid: {
+                    borderWidth: 0,
+                    labelMargin: 0
+                },
+                yaxis: {
+                    show: false,
+                    min: 0,
+                    max: 100
+                },
+                xaxis: {
+                    show: false
+                }
+            });
+
+            $.plot('#flotChart2', [{
+                data: dashData2,
+                color: '#007bff'
+            }], {
+                series: {
+                    shadowSize: 0,
+                    lines: {
+                        show: true,
+                        lineWidth: 2,
+                        fill: true,
+                        fillColor: {
+                            colors: [{
+                                opacity: 0
+                            }, {
+                                opacity: 1
+                            }]
+                        }
+                    }
+                },
+                grid: {
+                    borderWidth: 0,
+                    labelMargin: 0
+                },
+                yaxis: {
+                    show: false,
+                    min: 0,
+                    max: 100
+                },
+                xaxis: {
+                    show: false
+                }
+            });
+
+            $.plot('#flotChart3', [{
+                data: dashData3,
+                color: '#f10075'
+            }], {
+                series: {
+                    shadowSize: 0,
+                    lines: {
+                        show: true,
+                        lineWidth: 2,
+                        fill: true,
+                        fillColor: {
+                            colors: [{
+                                opacity: 0
+                            }, {
+                                opacity: 1
+                            }]
+                        }
+                    }
+                },
+                grid: {
+                    borderWidth: 0,
+                    labelMargin: 0
+                },
+                yaxis: {
+                    show: false,
+                    min: 0,
+                    max: 100
+                },
+                xaxis: {
+                    show: false
+                }
+            });
+
+            $.plot('#flotChart4', [{
+                data: dashData4,
+                color: '#00cccc'
+            }], {
+                series: {
+                    shadowSize: 0,
+                    lines: {
+                        show: true,
+                        lineWidth: 2,
+                        fill: true,
+                        fillColor: {
+                            colors: [{
+                                opacity: 0
+                            }, {
+                                opacity: 1
+                            }]
+                        }
+                    }
+                },
+                grid: {
+                    borderWidth: 0,
+                    labelMargin: 0
+                },
+                yaxis: {
+                    show: false,
+                    min: 0,
+                    max: 100
+                },
+                xaxis: {
+                    show: false
+                }
+            });
+
+            $.plot('#flotChart5', [{
+                data: dashData2,
+                color: '#00cccc'
+            }, {
+                data: dashData3,
+                color: '#007bff'
+            }, {
+                data: dashData4,
+                color: '#f10075'
+            }], {
+                series: {
+                    shadowSize: 0,
+                    lines: {
+                        show: true,
+                        lineWidth: 2,
+                        fill: false,
+                        fillColor: {
+                            colors: [{
+                                opacity: 0
+                            }, {
+                                opacity: 1
+                            }]
+                        }
+                    }
+                },
+                grid: {
+                    borderWidth: 0,
+                    labelMargin: 20
+                },
+                yaxis: {
+                    show: false,
+                    min: 0,
+                    max: 100
+                },
+                xaxis: {
+                    show: true,
+                    color: 'rgba(0,0,0,.16)',
+                    ticks: [
+                        [0, ''],
+                        [10, '<span>Nov</span><span>05</span>'],
+                        [20, '<span>Nov</span><span>10</span>'],
+                        [30, '<span>Nov</span><span>15</span>'],
+                        [40, '<span>Nov</span><span>18</span>'],
+                        [50, '<span>Nov</span><span>22</span>'],
+                        [60, '<span>Nov</span><span>26</span>'],
+                        [70, '<span>Nov</span><span>30</span>'],
+                    ]
+                }
+            });
+
+            $.plot('#flotChart6', [{
+                data: dashData2,
+                color: '#6f42c1'
+            }, {
+                data: dashData3,
+                color: '#007bff'
+            }, {
+                data: dashData4,
+                color: '#00cccc'
+            }], {
+                series: {
+                    shadowSize: 0,
+                    stack: true,
+                    bars: {
+                        show: true,
+                        lineWidth: 0,
+                        fill: 0.85
+                            //fillColor: { colors: [ { opacity: 0 }, { opacity: 1 } ] }
+                    }
+                },
+                grid: {
+                    borderWidth: 0,
+                    labelMargin: 20
+                },
+                yaxis: {
+                    show: false,
+                    min: 0,
+                    max: 100
+                },
+                xaxis: {
+                    show: true,
+                    color: 'rgba(0,0,0,.16)',
+                    ticks: [
+                        [0, ''],
+                        [10, '<span>Nov</span><span>05</span>'],
+                        [20, '<span>Nov</span><span>10</span>'],
+                        [30, '<span>Nov</span><span>15</span>'],
+                        [40, '<span>Nov</span><span>18</span>'],
+                        [50, '<span>Nov</span><span>22</span>'],
+                        [60, '<span>Nov</span><span>26</span>'],
+                        [70, '<span>Nov</span><span>30</span>'],
+                    ]
+                }
+            });
+
+            $('#vmap').vectorMap({
+                map: 'world_en',
+                showTooltip: true,
+                backgroundColor: '#f8f9fa',
+                color: '#ced4da',
+                colors: {
+                    us: '#6610f2',
+                    gb: '#8b4bf3',
+                    ru: '#aa7df3',
+                    cn: '#c8aef4',
+                    au: '#dfd3f2'
+                },
+                hoverColor: '#222',
+                enableZoom: false,
+                borderOpacity: .3,
+                borderWidth: 3,
+                borderColor: '#fff',
+                hoverOpacity: .85
+            });
+
+        });
+    </script>
+
+    <script>
+        $(function() {
+            'use strict'
+
+            if ($('.az-iconbar .nav-link.active').length) {
+                var targ = $('.az-iconbar .nav-link.active').attr('href');
+                $(targ).addClass('show');
+
+                if (window.matchMedia('(min-width: 1200px)').matches) {
+                    $('.az-iconbar-aside').addClass('show');
+                }
+
+                if (window.matchMedia('(min-width: 992px)').matches &&
+                    window.matchMedia('(max-width: 1199px)').matches) {
+                    $('.az-iconbar .nav-link.active').removeClass('active');
+                }
+            }
+
+            $('.az-iconbar .nav-link').on('click', function(e) {
+                e.preventDefault();
+
+                $(this).addClass('active');
+                $(this).siblings().removeClass('active');
+
+                $('.az-iconbar-aside').addClass('show');
+
+                var targ = $(this).attr('href');
+                $(targ).addClass('show');
+                $(targ).siblings().removeClass('show');
+            });
+
+            $('.az-iconbar-body .with-sub').on('click', function(e) {
+                e.preventDefault();
+                $(this).parent().addClass('show');
+                $(this).parent().siblings().removeClass('show');
+            });
+
+            $('.az-iconbar-toggle-menu').on('click', function(e) {
+                e.preventDefault();
+
+                if (window.matchMedia('(min-width: 992px)').matches) {
+                    $('.az-iconbar .nav-link.active').removeClass('active');
+                    $('.az-iconbar-aside').removeClass('show');
+                } else {
+                    $('body').removeClass('az-iconbar-show');
+                }
+            })
+
+            $('#azIconbarShow').on('click', function(e) {
+                e.preventDefault();
+                $('body').toggleClass('az-iconbar-show');
+            });
+
+            /** CHARTS **/
+
+            var ctx1 = document.getElementById('chartBar1').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        data: [12, 25, 20, 32, 25, 18],
+                        backgroundColor: '#560bd0'
+                    }, {
+                        data: [22, 30, 25, 30, 20, 25],
+                        backgroundColor: '#cad0e8'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    legend: {
+                        display: false,
+                        labels: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        yAxes: [{
+                            display: false,
+                            ticks: {
+                                beginAtZero: false,
+                                fontSize: 10,
+                                max: 60,
+                                padding: 0
+                            }
+                        }],
+                        xAxes: [{
+                            gridLines: {
+                                display: true,
+                                borderDash: [10, 4],
+                                color: '#ced4da',
+                                drawBorder: false
+                            },
+                            barPercentage: 0.6,
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11,
+                                fontFamily: 'Arial'
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var ctx2 = document.getElementById('chartBar2').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        data: [20, 25, 32, 18, 25, 23],
+                        backgroundColor: '#3295ff'
+                    }, {
+                        data: [22, 30, 25, 30, 20, 30],
+                        backgroundColor: '#00cccc'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    legend: {
+                        display: false,
+                        labels: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        yAxes: [{
+                            display: false,
+                            ticks: {
+                                beginAtZero: false,
+                                fontSize: 10,
+                                max: 60,
+                                padding: 0
+                            }
+                        }],
+                        xAxes: [{
+                            gridLines: {
+                                borderDash: [10, 4],
+                                color: '#ced4da',
+                                drawBorder: false
+                            },
+                            barPercentage: 0.6,
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11,
+                                fontFamily: 'Arial'
+                            }
+                        }]
+                    }
+                }
+            });
+
+            $('#vmap').vectorMap({
+                map: 'world_en',
+                backgroundColor: '#fff',
+                enableZoom: false,
+                color: '#ffffff',
+                hoverOpacity: 1,
+                showTooltip: false,
+                scaleColors: ['#e9ecef', '#dee2e6'],
+                borderWidth: 1,
+                borderColor: '#fff',
+                values: sample_data,
+                normalizeFunction: 'polynomial'
+            });
+
+            // We use an inline data source in the example, usually data would
+            // be fetched from a server
+            var data = [];
+            var totalPoints = 150;
+
+            function getRandomData() {
+                if (data.length > 0)
+                    data = data.slice(1);
+
+                // Do a random walk
+                while (data.length < totalPoints) {
+                    var prev = data.length > 0 ? data[data.length - 1] : 50;
+                    var y = prev + Math.random() * 10 - 5;
+
+                    if (y < 0) {
+                        y = 0;
+                    } else if (y > 100) {
+                        y = 100;
+                    }
+
+                    data.push(y);
+                }
+
+                // Zip the generated y values with the x values
+                var res = [];
+                for (var i = 0; i < data.length; ++i) {
+                    res.push([i, data[i]])
+                }
+
+                return res;
+            }
+
+            var plot = $.plot('#flotChart', [getRandomData()], {
+                series: {
+                    color: '#560bd0',
+                    shadowSize: 0,
+                    lines: {
+                        show: true,
+                        lineWidth: 2,
+                        fill: true,
+                        fillColor: {
+                            colors: [{
+                                opacity: 0
+                            }, {
+                                opacity: 0.8
+                            }]
+                        }
+                    }
+                },
+                crosshair: {
+                    mode: 'x',
+                    color: '#f10075'
+                },
+                grid: {
+                    borderWidth: 0
+                },
+                yaxis: {
+                    min: 0,
+                    max: 100,
+                    color: 'rgba(0,0,0,.08)',
+                    font: {
+                        size: 10,
+                        color: '#666',
+                        family: 'Arial'
+                    },
+                    tickSize: 15
+                },
+                xaxis: {
+                    show: false
+                }
+            });
+
+            function update() {
+                plot.setData([getRandomData()]);
+
+                // Since the axes don't change, we don't need to call plot.setupGrid()
+                plot.draw();
+                setTimeout(update, 2000);
+            }
+
+            update();
+
+        });
+    </script>
+    <!-- WIZARD -->
+    <script>
+        $(function() {
+            'use strict'
+
+            $('#wizard1').steps({
+                headerTag: 'h3',
+                bodyTag: 'section',
+                autoFocus: true,
+                titleTemplate: '<span class="number">#index#</span> <span class="title">#title#</span>'
+            });
+
+            $('#wizard2').steps({
+                headerTag: 'h3',
+                bodyTag: 'section',
+                autoFocus: true,
+                titleTemplate: '<span class="number">#index#</span> <span class="title">#title#</span>',
+                onStepChanging: function(event, currentIndex, newIndex) {
+                    if (currentIndex < newIndex) {
+                        // Step 1 form validation
+                        if (currentIndex === 0) {
+                            var fname = $('#firstname').parsley();
+                            var lname = $('#lastname').parsley();
+
+                            if (fname.isValid() && lname.isValid()) {
+                                return true;
+                            } else {
+                                fname.validate();
+                                lname.validate();
+                            }
+                        }
+
+                        // Step 2 form validation
+                        if (currentIndex === 1) {
+                            var email = $('#email').parsley();
+                            if (email.isValid()) {
+                                return true;
+                            } else {
+                                email.validate();
+                            }
+                        }
+                        // Always allow step back to the previous step even if the current step is not valid.
+                    } else {
+                        return true;
+                    }
+                }
+            });
+
+            $('#wizard3').steps({
+                headerTag: 'h3',
+                bodyTag: 'section',
+                autoFocus: true,
+                titleTemplate: '<span class="number">#index#</span> <span class="title">#title#</span>',
+                stepsOrientation: 1
+            });
+        });
+    </script>
+
+</body>
+
+</html>

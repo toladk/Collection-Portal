@@ -1,0 +1,42 @@
+<div class="az-content-body">
+    <div class="az-content mb-4 d-block d-md-flex mt-4">
+        <div>
+            <h2 class="az-content-title mg-b-5 mg-b-lg-8">Hi, welcome back!</h2>
+            <p class="mg-b-0">Your transactions monitoring dashboard system.</p>
+        </div>
+    </div>
+    <!-- az-content-header -->
+    <div class="row row-sm">
+        <div class="col-sm-6 col-lg-4 col-xl-6 mg-t-20 mg-sm-t-0">
+            <div class="card card-body card-dashboard-fifteen">
+                <h1 class="mb-1">{{ pendingTransaction.length }}</h1>
+                <label class="tx-purple">Pending Transactions</label>
+                <span class="mb-4">The total number of <b>Pending Transactions</b></span>
+            </div>
+            <!-- card -->
+        </div>
+        <!-- col -->
+        <div class="col-sm-6 col-lg-4 col-xl-6 mg-t-20 mg-sm-t-0">
+            <div class="card card-body card-dashboard-fifteen">
+                <h1 class="mb-1">{{ approvedTransaction.length }}</h1>
+                <label class="tx-success">Approved Transactions</label>
+                <span class="mb-4">The total number of <b>Approved Transactions</b></span>
+            </div>
+            <!-- card -->
+        </div>
+        <!-- col -->
+    </div>
+    <!-- row -->
+    <div class="row row-sm mt-4">
+        <div class="col-sm-12 col-lg-12 col-xl-12 mg-sm-t-0">
+            <div class="card card-body card-dashboard-fifteen">
+                <h1 class="mb-1">0</h1>
+                <label class="tx-primary">Reports</label>
+                <span class="mb-4">The total number of <b>Reports</b></span>
+            </div>
+            <!-- card -->
+        </div>
+    </div>
+    <!-- row -->
+</div>
+<!-- az-content-body -->

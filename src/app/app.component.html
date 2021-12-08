@@ -1,0 +1,15 @@
+
+<div *ngIf="loggedIn">
+
+  <app-navbar></app-navbar>
+
+  <!-- <div class="az-footer ht-40">
+    <div class="container pd-t-0-f ht-100p">
+      <span>&copy; 2018 Heritage Bank</span>
+    </div>
+  </div> -->
+</div>
+
+<div class="az-body" style="background-color: #1CAA3D;" *ngIf="!loggedIn">
+  <app-login></app-login>
+</div>

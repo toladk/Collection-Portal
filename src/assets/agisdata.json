@@ -1,0 +1,30 @@
+[
+  {
+    "nameOfPlotOwner": "Adeola Jones",
+    "paymentFor": "Roll Over",
+    "depositorName": "Ajose Adeogun",
+    "amount": "209,000",
+    "debitAccount":"3232938"
+  },
+  {
+    "nameOfPlotOwner": "Mariam Adeoya",
+    "paymentFor": "Central Admin",
+    "depositorName": "Aruna Road",
+    "amount": "739,000",
+    "debitAccount":"3232938"
+  },
+  {
+    "nameOfPlotOwner": "Babaliki Thomas",
+    "paymentFor": "Term Deposit",
+    "depositorName": "Hamedu Bello",
+    "amount": "13,000",
+    "debitAccount":"3232938"
+  },
+  {
+    "nameOfPlotOwner": "Gbemga Thomas",
+    "paymentFor": "Full and Final",
+    "depositorName": "Seun Koya Road",
+    "amount": "34,000",
+    "debitAccount":"3232938"
+  }
+]

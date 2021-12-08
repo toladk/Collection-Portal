@@ -1,0 +1,150 @@
+<div class="az-content-body">
+
+  <div class="col-md-12 mt-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-style1 mg-b-0 pl-0" style="background-color: #CDD4E0 !important;">
+        <li class="breadcrumb-item"><a routerLink="">Report</a></li>
+        <li class="breadcrumb-item"><a routerLink="/arena-dashboard">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Declined Transactions</li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="col-md-12 col-lg-12 card mg-t-30">
+    <form [formGroup]="reportDeclinedTransForm">
+      <div class="col-md-12 pr-0 pl-0 d-flex mt-3 mb-3">
+        <div class="col-md-3 pl-0">
+          <div class="az-form-group">
+            <nz-form-item style="margin-bottom: 9px !important;">
+              <nz-form-control nzErrorTip="Please enter From Date!">
+                <label class="form-label" style="font-weight: 600; color: darkslategray;">From Date</label>
+                <nz-input-group nzPrefixIcon="right-square">
+                  <input type="date" formControlName="fromDate" nz-input placeholder="Enter Date" />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div class="col-md-3 pl-0">
+          <div class="az-form-group">
+            <nz-form-item style="margin-bottom: 9px !important;">
+              <nz-form-control nzErrorTip="Please enter To Date!">
+                <label class="form-label" style="font-weight: 600; color: darkslategray;">To Date</label>
+                <nz-input-group nzPrefixIcon="left-square">
+                  <input type="date" formControlName="toDate" nz-input placeholder="Enter Date" />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div class="col-md-6 pr-0">
+          <div class="float-right mt-4"><button class="btn btn-success btn-with-icon btn-block"
+             type="submit" [disabled]="!reportDeclinedTransForm.valid" (click)="getDeclinedTransactions()"><i class="typcn typcn-zoom"></i> Get Transactions</button></div>
+        </div>
+      </div>
+    </form>
+
+    <div class="col-md-12 pr-0 pl-0 d-flex mb-2">
+      <button nz-button nzType="primary" *ngIf="isShown" (click)="downloadData()" [nzLoading]="isLoadingTwo"
+       style="background-color: #2E8A01; border: #2E8A01"><i nz-icon nzType="download"></i>Export Transaction</button>
+    </div>
+  </div>
+
+
+  <div class="col-md-12 col-lg-12 card mg-t-30">
+    <div class="col-md-12">
+      <div class="col-md-12 pl-0 pr-0 d-flex mt-4 mb-5">
+        <div class="col-md-6 pl-0">
+          <div class="az-content-label pt-3">Declined Transactions</div>
+        </div>
+        <div class="col-md-6 pr-0">
+          <div class="float-right mt-3">
+            <nz-input-group [nzSuffix]="suffixIconSearch">
+              <input type="text" [(ngModel)]="searchValue" nz-input placeholder="Search" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive mb-4" *ngIf="this.declinedTransactionList.length > 0">
+        <table class="table table-hover mg-b-0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th (click)="sort('applicantName')" style="cursor: pointer;">Applicant Name <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+              <th (click)="sort('applicationType')" style="cursor: pointer;">App Type <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+              <th (click)="sort('applicantId')" style="cursor: pointer;">App ID <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+              <th (click)="sort('amount')" style="cursor: pointer;">Amount <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+              <th (click)="sort('branchName')" style="cursor: pointer;">Branch <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of declinedTransactionList | searchfilterforarena: searchValue | paginate: {itemsPerPage: 10 , currentPage: pagination} | orderBy: key: reverse; let i = index">
+              <th scope="row">{{ i+1}}</th>
+              <td>{{ data.applicantName }}</td>
+              <td>{{ data.applicationType }}</td>
+              <td>{{ data.applicantId }}</td>
+              <td>&#8358; {{ data.amount }}</td>
+              <td>{{ data.branchName }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 mt-4 mb-0">
+          <div class="row d-flex">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 mb-0">
+              <p>Total Declined Transactions: {{ declinedTransactionList.length }}</p>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 mb-0">
+              <pagination-controls (pageChange) = "pagination = $event" class="float-right"></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div><!-- table-responsive -->
+
+      <div class="table-responsive mb-4" *ngIf="this.declinedTransactionList.length < 1">
+        <table class="table table-hover mg-b-0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th (click)="sort('applicantName')" style="cursor: pointer;">Applicant Name <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+              <th (click)="sort('applicationType')" style="cursor: pointer;">App Type <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+              <th (click)="sort('applicantId')" style="cursor: pointer;">App ID <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+              <th (click)="sort('amount')" style="cursor: pointer;">Amount <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+              <th (click)="sort('branchName')" style="cursor: pointer;">Branch <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="10" class="text-center">
+                <div class="text-center mt-4 mg-b-30" *ngIf="isShown">
+                  <div class="spinner-border">
+                    <span class="sr-only"></span>
+                  </div>
+                </div>
+                <div class="mt-3 mb-3 font-23" *ngIf="!isShown2"><h6 class="col-green">Get Data by filtering <b>From Date - To Date</b></h6></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 mt-4 mb-0">
+          <div class="row d-flex">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 mb-0">
+              <p>Total DeclinedTransactions: {{ declinedTransactionList.length }}</p>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 mb-0">
+              <pagination-controls (pageChange) = "pagination = $event" class="float-right"></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div><!-- table-responsive -->
+  </div>
+
+
+  </div>
+
+
+
+</div><!-- az-content-body -->

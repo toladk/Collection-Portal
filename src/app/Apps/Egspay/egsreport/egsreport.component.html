@@ -1,0 +1,188 @@
+<div class="az-content-header">
+    <div class="az-content-header-top mt-3">
+        <div>
+            <h2 class="az-content-title mg-b-5 mg-b-lg-8">Report</h2>
+            <p class="mg-b-0">All Transaction Report.</p>
+        </div>
+        <div class="az-dashboard-date">
+            <div class="date">
+            </div>
+            <!-- <div class="date">
+              <div class="float-right"><button class="btn btn-primary btn-with-icon btn-block" style="background-color: #4BA145; border: #4BA145;" (click)="open()" *ngIf="permissionList.indexOf('CANLOGTRANSACTION') > -1"><i class="typcn typcn-plus"></i>Post New Transaction</button></div>
+          </div> -->
+
+        </div>
+    </div>
+    <!-- az-content-body-title -->
+</div>
+
+
+<div class="az-content-body">
+    <div class="col-md-12 col-lg-12 card mg-t-10">
+        <div class="col-md-12 mt-5">
+            <h6 style="margin-left: 15px;">Filter to get transactions</h6>
+        </div>
+        <form [formGroup]="transactionForm">
+            <div class="col-md-12 d-flex">
+
+                <div class="col-md-3">
+                    <div class="az-form-group">
+                        <nz-form-item style="margin-bottom: 9px !important;">
+                            <nz-form-control nzErrorTip="Please select status!">
+                                <label class="form-label" style="font-weight: 600; color: darkslategray;">Select Status</label>
+                                <nz-select nzShowSearch formControlName="tranStatus" nzAllowClear nzPlaceHolder="Select Status">
+                                    <nz-option nzLabel="Pending" nzValue="0"></nz-option>
+                                    <nz-option nzLabel="Declined" nzValue="1"></nz-option>
+                                    <nz-option nzLabel="Approved" nzValue="2"></nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="az-form-group">
+                        <nz-form-item style="margin-bottom: 9px !important;">
+                            <nz-form-control nzErrorTip="Please enter date!">
+                                <label class="form-label" style="font-weight: 600; color: darkslategray;">From</label>
+                                <nz-input-group>
+                                    <input type="date" formControlName="fromDate" nz-input placeholder="Enter Date" />
+                                </nz-input-group>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="az-form-group">
+                        <nz-form-item style="margin-bottom: 9px !important;">
+                            <nz-form-control nzErrorTip="Please enter date!">
+                                <label class="form-label" style="font-weight: 600; color: darkslategray;">To</label>
+                                <nz-input-group>
+                                    <input type="date" formControlName="toDate" nz-input placeholder="Enter Date" />
+                                </nz-input-group>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="">
+                        <button nz-button [disabled]="!transactionForm.valid" style="background-color: #4BA145; border: #4BA145; width: 100%; margin-top: 29px;" (click)="getAllTransactions()" nzType="primary" [nzLoading]="isLoadingOne">Get Transactions</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="col-md-12 mt-5">
+            <div class="d-flex" *ngIf="downloadSearch1">
+                <div class="col-md-6">
+                    <h5 *ngIf="this.transactionForm.value.tranStatus === '2'">List of Approved Transactions</h5>
+                    <h5 *ngIf="this.transactionForm.value.tranStatus === '0'">List of Pending Transactions</h5>
+                    <h5 *ngIf="this.transactionForm.value.tranStatus === ''">List of Transactions</h5>
+                    <h5 *ngIf="this.transactionForm.value.tranStatus === '1'">List of Declined Transactions</h5>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <nz-input-group [nzSuffix]="suffixIconSearch">
+                        <input type="text" [(ngModel)]="searchValue" nz-input placeholder="Search" />
+                    </nz-input-group>
+                    <ng-template #suffixIconSearch>
+                        <i nz-icon nzType="search"></i>
+                    </ng-template>
+                </div>
+            </div>
+            <div class="d-flex" *ngIf="downloadSearch2">
+                <div class="col-md-4">
+                    <h5 *ngIf="this.transactionForm.value.tranStatus === '2'">List of Approved Transactions</h5>
+                    <h5 *ngIf="this.transactionForm.value.tranStatus === '0'">List of Pending Transactions</h5>
+                    <h5 *ngIf="this.transactionForm.value.tranStatus === ''">List of Transactions</h5>
+                    <h5 *ngIf="this.transactionForm.value.tranStatus === '1'">List of Declined Transactions</h5>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <nz-input-group [nzSuffix]="suffixIconSearch">
+                        <input type="text" [(ngModel)]="searchValue" nz-input placeholder="Search" />
+                    </nz-input-group>
+                    <ng-template #suffixIconSearch>
+                        <i nz-icon nzType="search"></i>
+                    </ng-template>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <form [formGroup]="downloadForm">
+                        <div class="" style="float: right;">
+                            <nz-select nzShowSearch nzAllowClear style="width: 150px;" formControlName="downloadSelect" (ngModelChange)="changeDownloadSelect()" nzPlaceHolder="Select format">
+                                <!-- <nz-option nzLabel="PDF" nzValue="pdf"></nz-option> -->
+                                <nz-option nzLabel="EXCEL" nzValue="excel"></nz-option>
+                            </nz-select>
+                            <button nz-button [disabled]="!downloadForm.valid" style="background-color: #4BA145; border: #4BA145;" nzType="primary" [nzLoading]="isLoadingOneDownload" (click)="downloadReportData()">Download</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 mt-4">
+            <div class="table-responsive mb-4">
+                <table class="table table-hover mg-b-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th (click)="sort('applicantName')" style="cursor: pointer;">Applicant Name </th>
+                            <th (click)="sort('amount')" style="cursor: pointer;">Amount </th>
+                            <th (click)="sort('depositSlipNo')" style="cursor: pointer;">Slip No </th>
+                            <th (click)="sort('InvoiceNo')" style="cursor: pointer;">Invoice No </th>
+                            <th (click)="sort('status')" style="cursor: pointer;">Status</th>
+                            <th (click)="sort('branchName')" style="cursor: pointer;">Branch Name</th>
+                            <th (click)="sort('referenceNo')" style="cursor: pointer;">Reference No</th>
+                            <th (click)="sort('approveBy')" style="cursor: pointer;" *ngIf="this.transactionForm.value.tranStatus === '2'">Approved By</th>
+                            <th (click)="sort('createdOn')" style="cursor: pointer;">Created On</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="this.allTransactionList.length > 0">
+                        <tr *ngFor="let list of allTransactionList | searchfilteregsreport: searchValue | orderBy: key: reverse | paginate: {itemsPerPage: itemsPerPage , currentPage: pagination}; let i = index">
+                            <th scope="row">{{ i+1}}</th>
+                            <td>{{ list.applicantName }}</td>
+                            <td>{{ list.amount }}</td>
+                            <td>{{ list.depositSlipNo }}</td>
+                            <td>{{ list.invoiceNo }}</td>
+                            <td>
+                                <span *ngIf="list.status === 'Pending'" class="badge badge-warning">{{ list.status }}</span>
+                                <span *ngIf="list.status === 'Approved'" class="badge badge-success">{{ list.status }}</span>
+                                <span *ngIf="list.status === 'Declined'" class="badge badge-danger">{{ list.status }}</span>
+                            </td>
+                            <td>{{ list.branchName }}</td>
+                            <td>{{ list.referenceNo }}</td>
+                            <td *ngIf="this.transactionForm.value.tranStatus === '2'">{{ list.approvedBy }}</td>
+                            <td>{{ list.createdOn | date }}</td>
+                        </tr>
+                    </tbody>
+                    <tbody *ngIf="this.allTransactionList.length < 1">
+                        <tr>
+                            <td colspan="10">
+                                <div class="text-center mg-b-20" style="margin-top: 25px !important;" *ngIf="show">
+                                    <div class="spinner-border">
+                                        <span class="sr-only"></span>
+                                    </div>
+                                </div>
+                                <div class="text-center mg-b-20" style="margin-top: 25px !important;" *ngIf="show2">
+                                    <div class="text-dark-75 font-weight-bolder">No Data !!!</div>
+                                </div>
+                                <div class="text-center mg-b-20" style="margin-top: 25px !important;" *ngIf="show3">
+                                    <div class="text-dark-75 font-weight-bolder">Filter to get transactions !!!</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 mt-4 mb-0">
+                    <div class="row d-flex">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-0">
+                            <p>Total Transactions: {{ allTransactionList.length }}</p>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-8 mb-0">
+                            <div class="float-right">
+                                <pagination-controls (pageChange)="getAllTransactionsPage(pagination = $event)"></pagination-controls>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

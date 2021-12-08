@@ -1,0 +1,27 @@
+<div class="az-signin-wrapper m-t-5 mb-3" style="margin-top: 100px !important;">
+  <div class="az-card-signin mt-5">
+    <div class="az-signin-header">
+      <h1 class="az-logo text-success mb-0">HB-NG</h1>
+      <h4 class="text-success mb-4">Collection Portal</h4>
+
+      <form #loginForm=ngForm (ngSubmit)="onSubmit()">
+        <div class="alert alert-danger" [hidden]="!error">
+          {{error}}
+        </div>
+        <div class="form-group">
+          <i class="typcn typcn-mail mr-2" style="font-size: 24px;"></i> <label>Email</label>
+          <input type="text" class="form-control" placeholder="Enter your username" name="username" id="inputEmail3" [(ngModel)] = "form.username" required>
+        </div><!-- form-group -->
+        <div class="form-group">
+          <i class="typcn typcn-lock-closed mr-2" style="font-size: 24px;"></i> <label>Password</label>
+          <input type="password" class="form-control" placeholder="Enter your password" name="password" id="inputPassword3" [(ngModel)] = "form.password" required>
+        </div><!-- form-group -->
+        <button class="btn-block mt-2" nz-button nzType="primary" type="submit" [disabled] = "!loginForm.valid" [nzLoading]="isLoadingTwo"
+       style="background-color: #2E8A01; border: #2E8A01; color: white !important;"><i nz-icon nzType="login"></i>Sign In</button>
+      </form>
+    </div><!-- az-signin-header -->
+    <div class="az-signin-footer">
+      <!-- <a href="#">Forgot password?</a> -->
+    </div><!-- az-signin-footer -->
+  </div><!-- az-card-signin -->
+</div><!-- az-signin-wrapper -->

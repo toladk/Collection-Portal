@@ -1,0 +1,1312 @@
+<div class="az-content-header">
+    <div class="col-md-12 pl-0 mt-3 mb-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-style1 mg-b-0 pl-0">
+                <li class="breadcrumb-item"><a href="#">Transactions</a></li>
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Transactions</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="az-content-header-top">
+
+        <div>
+            <h2 class="az-content-title mg-b-5 mg-b-lg-8">Transaction Management</h2>
+            <!-- <p class="mg-b-0">Get transaction.</p> -->
+        </div>
+    </div>
+    <!-- az-content-body-title -->
+
+    <div class="nav-wrapper">
+
+        <nav class="nav az-nav-line">
+            <a href="javascript::void(0)" *ngIf="indextab == 'First-content'" (click)="tab('firstTab') && permissionList.indexOf('CANVIEWALLTRANSACTIONS') > -1" class="nav-link active">All Transactions</a>
+            <a href="javascript::void(0)" *ngIf="indextab != 'First-content'" (click)="tab('firstTab') && permissionList.indexOf('CANVIEWALLTRANSACTIONS') > -1" class="nav-link">All Transactions</a>
+            <a href="javascript::void(0)" *ngIf="indextab == 'Second-content'" (click)="tab('secondTab')" class="nav-link active">Pending Transactions</a>
+            <a href="javascript::void(0)" *ngIf="indextab != 'Second-content'" (click)="tab('secondTab')" class="nav-link">Pending Transactions</a>
+            <a href="javascript::void(0)" *ngIf="indextab == 'Third-content'" (click)="tab('thirdTab') && permissionList.indexOf('CANVIEWSUCCESSFULTRANSACTIONS') > -1" class="nav-link active">Approved Transactions</a>
+            <a href="javascript::void(0)" *ngIf="indextab != 'Third-content'" (click)="tab('thirdTab') && permissionList.indexOf('CANVIEWSUCCESSFULTRANSACTIONS') > -1" class="nav-link">Approved Transactions</a>
+            <a href="javascript::void(0)" *ngIf="indextab == 'Fourth-content'" (click)="tab('fourthTab') && permissionList.indexOf('CANVIEWFAILEDTRANSACTIONS') > -1" class="nav-link active">Rejected Transactions</a>
+            <a href="javascript::void(0)" *ngIf="indextab != 'Fourth-content'" (click)="tab('fourthTab') && permissionList.indexOf('CANVIEWFAILEDTRANSACTIONS') > -1" class="nav-link">Rejected Transactions</a>
+            <a href="javascript::void(0)" *ngIf="indextab == 'Fifth-content'" (click)="tab('fifthTab')" class="nav-link active" style="font-weight: 500 !important; margin-left: 25px !important;">Failed Transactions</a>
+            <a href="javascript::void(0)" *ngIf="indextab != 'Fifth-content'" (click)="tab('fifthTab')" class="nav-link" style="font-weight: 500 !important; margin-left: 25px !important;">Failed Transactions</a>
+        </nav>
+
+    </div>
+</div>
+
+
+
+
+
+<div class="az-content-body">
+
+    <div class="" *ngIf="indextab == 'First-content'">
+        <div class="col-md-12 col-lg-12 card mg-t-10">
+            <div class="col-md-12 pl-0 pr-0 d-flex">
+                <div class="col-md-6 pl-0 pr-0">
+                    <h4 style="padding-top: 20px;">AGIS - All Transaction</h4>
+                </div>
+                <div class="col-md-6 pl-0 pr-0">
+                    <p class="float-right mt-3 text-bold"><b>Total Transactions:</b> {{ allTransactionList.length }}</p>
+                </div>
+            </div>
+
+
+            <div class="col-md-12">
+                <div class="col-md-12 pl-0 pr-0 d-flex mt-4 mb-5">
+                    <div class="col-md-4 pl-0">
+                        <div class="az-content-label pt-3">All Transaction List</div>
+                    </div>
+                    <div class="col-md-4 pl-0 pr-0 mt-1">
+                        <nz-input-group [nzSuffix]="suffixIconSearch">
+                            <input type="text" [(ngModel)]="searchValue" nz-input placeholder="Search" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <i nz-icon nzType="search"></i>
+                        </ng-template>
+                    </div>
+                    <div class="col-md-4 pr-0">
+                        <div class="float-right"><button class="btn btn-success btn-with-icon btn-block" (click)="open()" *ngIf="permissionList.indexOf('CANLOGTRANSACTION') > -1"><i class="typcn typcn-plus"></i> Post New Transaction</button></div>
+                    </div>
+                </div>
+
+
+
+                <div class="table-responsive mb-4">
+                    <nz-table class="table table-hover mg-b-0" #basicTable [nzData]="allTransactionList">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th (click)="sort('nameOfPlotOwner')" style="cursor: pointer;">Name of Plot Owner <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('depositorName')" style="cursor: pointer;">Depositor Name <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('paymentFor')" style="cursor: pointer;">Payment For <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('amount')" style="cursor: pointer;">Amount <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="this.allTransactionList.length > 0">
+                            <tr *ngFor="let list of basicTable.data | searchfilterforagis: searchValue | orderBy: key: reverse; let i = index">
+                                <th scope="row">{{ i+1}}</th>
+                                <td>{{ list.nameOfPlotOwner }}</td>
+                                <td>{{ list.depositorName }}</td>
+                                <td>{{ list.paymentFor }}</td>
+                                <td>&#8358; {{ list.amount }}</td>
+                                <td>
+                                    <a routerLink="" *ngIf="list.status === 'Pending'" class="badge badge-info">Pending</a>
+                                    <a routerLink="" *ngIf="list.status === 'Successful'" class="badge badge-success">Approved</a>
+                                    <a routerLink="" *ngIf="list.status === 'Rejected'" class="badge badge-danger">Rejected</a>
+                                    <a routerLink="" *ngIf="list.status === 'Failed'" class="badge badge-warning">Failed</a>
+                                </td>
+                                <td>
+                                    <button nz-button nzType="primary" [nzSize]="size" nzTooltipTitle="edit" nzTooltipPlacement="rightTop" nz-button nz-tooltip (click)="updateTrans(list)"><i nz-icon nzType="edit"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody *ngIf="this.allTransactionList.length < 1">
+                            <tr>
+                                <td colspan="12">
+                                    <div class="text-center mt-4 mg-b-20">
+                                        <div class="spinner-border">
+                                            <span class="sr-only"></span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </div>
+                <!-- table-responsive -->
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="" *ngIf="indextab == 'Second-content'">
+        <div class="col-md-12 col-lg-12 card mg-t-10">
+            <div class="col-md-12 pl-0 pr-0 d-flex">
+                <div class="col-md-6 pl-0 pr-0">
+                    <h4 style="padding-top: 20px;">AGIS - Pending Transaction</h4>
+                </div>
+                <div class="col-md-6 pl-0 pr-0">
+                    <p class="float-right mt-3 text-bold"><b>Total Pending Transactions:</b> {{ allPendingTransactionList.length }}</p>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="col-md-12 pl-0 pr-0 d-flex mt-4 mb-5">
+                    <div class="col-md-8 pl-0">
+                        <div class="az-content-label pt-3">Pending Transaction List</div>
+                    </div>
+                    <div class="col-md-4 pl-0 pr-0 mt-1">
+                        <nz-input-group [nzSuffix]="suffixIconSearch">
+                            <input type="text" [(ngModel)]="searchValue" nz-input placeholder="Search" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <i nz-icon nzType="search"></i>
+                        </ng-template>
+                    </div>
+                </div>
+
+
+
+                <div class="table-responsive mb-4">
+                    <nz-table class="table table-hover mg-b-0" #basicTable [nzData]="allPendingTransactionList">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th (click)="sort('nameOfPlotOwner')" style="cursor: pointer;">Name of Plot Owner <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('depositorName')" style="cursor: pointer;">Depositor Name <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('paymentFor')" style="cursor: pointer;">Payment For <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('amount')" style="cursor: pointer;">Amount <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="this.allPendingTransactionList.length > 0">
+                            <tr *ngFor="let list of basicTable.data | searchfilterforagis: searchValue | orderBy: key: reverse; let i = index">
+                                <th scope="row">{{ i+1}}</th>
+                                <td>{{ list.nameOfPlotOwner }}</td>
+                                <td>{{ list.depositorName }}</td>
+                                <td>{{ list.paymentFor }}</td>
+                                <td>&#8358; {{ list.amount }}</td>
+                                <td>
+                                    <a routerLink="" class="badge badge-info" (click)="updateTransApproveAndReject(list)">View Details</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody *ngIf="this.allPendingTransactionList.length < 1">
+                            <tr>
+                                <td colspan="12">
+                                    <div class="text-center mt-4 mg-b-20">
+                                        <div class="spinner-border">
+                                            <span class="sr-only"></span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </div>
+                <!-- table-responsive -->
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="" *ngIf="indextab == 'Third-content'">
+        <div class="col-md-12 col-lg-12 card mg-t-10">
+            <div class="col-md-12 pl-0 pr-0 d-flex">
+                <div class="col-md-6 pl-0 pr-0">
+                    <h4 style="padding-top: 20px;">AGIS - Approved Transaction</h4>
+                </div>
+                <div class="col-md-6 pl-0 pr-0">
+                    <p class="float-right mt-3 text-bold"><b>Total Approved Transactions:</b> {{ allApprovedTransactionList.length }}</p>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="col-md-12 pl-0 pr-0 d-flex mt-4 mb-5">
+                    <div class="col-md-8 pl-0">
+                        <div class="az-content-label pt-3">Approved Transaction List</div>
+                    </div>
+                    <div class="col-md-4 pl-0 pr-0 mt-1">
+                        <nz-input-group [nzSuffix]="suffixIconSearch">
+                            <input type="text" [(ngModel)]="searchValue" nz-input placeholder="Search" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <i nz-icon nzType="search"></i>
+                        </ng-template>
+                    </div>
+                </div>
+
+
+
+                <div class="table-responsive mb-4">
+                    <nz-table class="table table-hover mg-b-0" #basicTable [nzData]="allApprovedTransactionList">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th (click)="sort('nameOfPlotOwner')" style="cursor: pointer;">Name of Plot Owner <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('depositorName')" style="cursor: pointer;">Depositor Name <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('paymentFor')" style="cursor: pointer;">Payment For <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('amount')" style="cursor: pointer;">Amount <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('paymentDescription')" style="cursor: pointer;"> Payment Description <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="this.allApprovedTransactionList.length > 0">
+                            <tr *ngFor="let list of basicTable.data | searchfilterforagis: searchValue | orderBy: key: reverse; let i = index">
+                                <th scope="row">{{ i+1}}</th>
+                                <td>{{ list.nameOfPlotOwner }}</td>
+                                <td>{{ list.depositorName }}</td>
+                                <td>{{ list.paymentFor }}</td>
+                                <td>&#8358; {{ list.amount }}</td>
+                                <td>{{ list.paymentDescription }}</td>
+                            </tr>
+                        </tbody>
+                        <tbody *ngIf="this.allApprovedTransactionList.length < 1">
+                            <tr>
+                                <td colspan="10">
+                                    <div class="text-center mt-4 mg-b-20">
+                                        <div class="spinner-border">
+                                            <span class="sr-only"></span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </div>
+                <!-- table-responsive -->
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="" *ngIf="indextab == 'Fourth-content'">
+        <div class="col-md-12 col-lg-12 card mg-t-10">
+            <div class="col-md-12 pl-0 pr-0 d-flex">
+                <div class="col-md-6 pl-0 pr-0">
+                    <h4 style="padding-top: 20px;">AGIS - Rejected Transaction</h4>
+                </div>
+                <div class="col-md-6 pl-0 pr-0">
+                    <p class="float-right mt-3 text-bold"><b>Total Rejected Transactions:</b> {{ allRejectedTransactionList.length }}</p>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="col-md-12 pl-0 pr-0 d-flex mt-4 mb-5">
+                    <div class="col-md-8 pl-0">
+                        <div class="az-content-label pt-3">Rejected Transaction List</div>
+                    </div>
+                    <div class="col-md-4 pl-0 pr-0 mt-1">
+                        <nz-input-group [nzSuffix]="suffixIconSearch">
+                            <input type="text" [(ngModel)]="searchValue" nz-input placeholder="Search" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <i nz-icon nzType="search"></i>
+                        </ng-template>
+                    </div>
+                </div>
+
+
+
+                <div class="table-responsive mb-4">
+                    <nz-table class="table table-hover mg-b-0" #basicTable [nzData]="allRejectedTransactionList">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th (click)="sort('nameOfPlotOwner')" style="cursor: pointer;">Name of Plot Owner <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('depositorName')" style="cursor: pointer;">Depositor Name <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('paymentFor')" style="cursor: pointer;">Payment For <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('amount')" style="cursor: pointer;">Amount <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('paymentDescription')" style="cursor: pointer;"> Payment Description <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="this.allRejectedTransactionList.length > 0">
+                            <tr *ngFor="let list of basicTable.data | searchfilterforagis: searchValue | orderBy: key: reverse; let i = index">
+                                <th scope="row">{{ i+1}}</th>
+                                <td>{{ list.nameOfPlotOwner }}</td>
+                                <td>{{ list.depositorName }}</td>
+                                <td>{{ list.paymentFor }}</td>
+                                <td>&#8358; {{ list.amount }}</td>
+                                <td>{{ list.paymentDescription }}</td>
+                            </tr>
+                        </tbody>
+                        <tbody *ngIf="this.allRejectedTransactionList.length < 1">
+                            <tr>
+                                <td colspan="10">
+                                    <div class="text-center mt-4 mg-b-20">
+                                        <div class="spinner-border">
+                                            <span class="sr-only"></span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </div>
+                <!-- table-responsive -->
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="" *ngIf="indextab == 'Fifth-content'">
+        <div class="col-md-12 col-lg-12 card mg-t-10">
+            <div class="col-md-12 pl-0 pr-0 d-flex">
+                <div class="col-md-6 pl-0 pr-0">
+                    <h4 style="padding-top: 20px;">AGIS - Failed Transaction</h4>
+                </div>
+                <div class="col-md-6 pl-0 pr-0">
+                    <p class="float-right mt-3 text-bold"><b>Total Failed Transactions:</b> {{ allFailedTransactionList.length }}</p>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="col-md-12 pl-0 pr-0 d-flex mt-4 mb-5">
+                    <div class="col-md-8 pl-0">
+                        <div class="az-content-label pt-3">Failed Transaction List</div>
+                    </div>
+                    <div class="col-md-4 pl-0 pr-0 mt-1">
+                        <nz-input-group [nzSuffix]="suffixIconSearch">
+                            <input type="text" [(ngModel)]="searchValue" nz-input placeholder="Search" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <i nz-icon nzType="search"></i>
+                        </ng-template>
+                    </div>
+                </div>
+
+
+
+                <div class="table-responsive mb-4">
+                    <nz-table class="table table-hover mg-b-0" #basicTable [nzData]="allApprovedTransactionList">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th (click)="sort('nameOfPlotOwner')" style="cursor: pointer;">Name of Plot Owner <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('depositorName')" style="cursor: pointer;">Depositor Name <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('paymentFor')" style="cursor: pointer;">Payment For <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('amount')" style="cursor: pointer;">Amount <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('paymentDescription')" style="cursor: pointer;"> Payment Description <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="this.allFailedTransactionList.length > 0">
+                            <tr *ngFor="let list of basicTable.data | searchfilterforagis: searchValue | orderBy: key: reverse; let i = index">
+                                <th scope="row">{{ i+1}}</th>
+                                <td>{{ list.nameOfPlotOwner }}</td>
+                                <td>{{ list.depositorName }}</td>
+                                <td>{{ list.paymentFor }}</td>
+                                <td>&#8358; {{ list.amount }}</td>
+                                <td>{{ list.paymentDescription }}</td>
+                                <td>
+                                    <a routerLink="" class="badge badge-info" (click)="updateTransApproveAndReject(list)">Retry</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody *ngIf="this.allFailedTransactionList.length < 1">
+                            <tr>
+                                <td colspan="10">
+                                    <div class="text-center mg-b-20" style="margin-top: 25px !important;" *ngIf="show">
+                                        <div class="spinner-border">
+                                            <span class="sr-only"></span>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mg-b-20" style="margin-top: 25px !important;" *ngIf="show2">
+                                        <div class="text-dark-75 font-weight-bolder">No Data !!!</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </div>
+                <!-- table-responsive -->
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+
+
+</div>
+<!-- az-content-body -->
+
+
+
+
+<!-- Drawer For Preview Transaction-->
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="true" [nzWidth]="870" [nzVisible]="drawerOpen" nzTitle="Post New Transaction" [nzFooter]="footerTpl" (nzOnClose)="close()">
+    <form nz-form *nzDrawerContent [formGroup]="transactionForm">
+        <div class="col-md-12 col-lg-12 pl-0 pr-0">
+            <h4 style="padding-top: 5px;">AGIS Payment - New Transaction</h4>
+
+            <div class="col-md-12 col-lg-12" style="padding-bottom: 20px;">
+                <div class="az-content-label mg-b-5 mt-4 mb-3">-- Owner Details Section --</div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Name!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Full Name</label>
+                                    <nz-input-group nzPrefixIcon="user">
+                                        <input type="text" [(ngModel)]="transForm.nameOfPlotOwner" formControlName="nameOfPlotOwner" id="nameOfPlotOwner" nz-input placeholder="Enter Name" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Email!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Email</label>
+                                    <nz-input-group nzPrefixIcon="mail">
+                                        <input type="email" [(ngModel)]="transForm.emailOfPlotOwner" formControlName="emailOfPlotOwner" id="emailOfPlotOwner" nz-input placeholder="Enter Email" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Phone Number without alphabet!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Phone Number</label>
+                                    <nz-input-group nzPrefixIcon="phone">
+                                        <input type="text" maxlength="11" [(ngModel)]="transForm.plotOwnerPhoneNumber" formControlName="plotOwnerPhoneNumber" id="plotOwnerPhoneNumber" nz-input placeholder="Enter Phone Number" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Date of Birth!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Date of Birth</label>
+                                    <nz-input-group nzPrefixIcon="calender">
+                                        <input type="date" [(ngModel)]="transForm.dateOfBirth" formControlName="dateOfBirth" id="dateOfBirth" nz-input placeholder="Enter Date of Birth" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your occupation without number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Occupation</label>
+                                    <nz-input-group nzPrefixIcon="shop">
+                                        <input type="text" [(ngModel)]="transForm.occupation" formControlName="occupation" id="occupation" nz-input placeholder="Enter Occupation" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Address!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Address</label>
+                                    <nz-input-group nzPrefixIcon="home">
+                                        <input type="text" [(ngModel)]="transForm.address" formControlName="address" id="address" nz-input placeholder="Enter Address" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <label class="form-label" style="font-weight: 600; color: darkslategray;">ID Type</label>
+                            <nz-select style="width: 100%;" nzShowSearch nzAllowClear [(ngModel)]="transForm.idType" formControlName="idType" id="idType" nzPlaceHolder="Select ID Type">
+                                <nz-option *ngFor="let list of allIdentityList" [nzValue]="list.name" [nzLabel]="list.name"></nz-option>
+                            </nz-select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <label class="form-label" style="font-weight: 600; color: darkslategray;">Cadestral Zone</label>
+                            <nz-select style="width: 100%;" nzShowSearch nzAllowClear [(ngModel)]="transForm.cadestralZone" formControlName="cadestralZone" id="cadestralZone" nzPlaceHolder="Select Cadestral Zone">
+                                <nz-option *ngFor="let list of allCadestralZoneList" [nzValue]="list.name" [nzLabel]="list.name"></nz-option>
+                            </nz-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your ID Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">ID Number</label>
+                                    <nz-input-group nzPrefixIcon="field-number">
+                                        <input type="text" [nzPrecision]="number" [(ngModel)]="transForm.idNumber" formControlName="idNumber" id="idNumber" nz-input placeholder="Enter ID Number" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Plot Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Plot Number</label>
+                                    <nz-input-group nzPrefixIcon="field-binary">
+                                        <input type="text" [(ngModel)]="transForm.plotNumber" formControlName="plotNumber" id="plotNumber" nz-input placeholder="Enter Plot Number" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="az-content-label mg-b-5 mt-5 mb-3">-- PAYMENT SECTION --</div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-12">
+                        <div class="az-form-group">
+                            <label class="form-label" style="font-weight: 600; color: darkslategray;">Payment For</label>
+                            <nz-select style="width: 100%;" nzShowSearch nzAllowClear [(ngModel)]="transForm.paymentFor" formControlName="paymentFor" id="paymentFor" nzPlaceHolder="Select Payment For">
+                                <nz-option *ngFor="let list of allPaymentForList" [nzValue]="list.subHead" [nzLabel]="list.subHead"></nz-option>
+                            </nz-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Amount!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Amount</label>
+                                    <nz-input-group nzPrefixIcon="banky">
+                                        <input type="number" [(ngModel)]="transForm.amount" formControlName="amount" id="amount" nz-input placeholder="Enter Amount" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Description!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Naration</label>
+                                    <nz-input-group nzPrefixIcon="book">
+                                        <input type="text" [(ngModel)]="transForm.paymentDescription" formControlName="paymentDescription" id="paymentDescription" nz-input placeholder="Enter Narration" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Despositor Name!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Depositor Name</label>
+                                    <nz-input-group nzPrefixIcon="user">
+                                        <input type="text" [(ngModel)]="transForm.depositorName" formControlName="depositorName" id="depositorName" nz-input placeholder="Enter Despositor Name" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Despositor Phone Number without alphabet!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Depositor Phone No.</label>
+                                    <nz-input-group nzPrefixIcon="phone">
+                                        <input type="text" maxlength="11" [(ngModel)]="transForm.depositorPhoneNumber" formControlName="depositorPhoneNumber" id="depositorPhoneNumber" nz-input placeholder="Enter Despositor Phone Number" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Despositor Slip without special character !!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Depositor Slip</label>
+                                    <nz-input-group nzPrefixIcon="file-done">
+                                        <input type="text" [(ngModel)]="transForm.depositorSlip" formControlName="depositorSlip" id="depositorSlip" nz-input placeholder="Enter Despositor Slip" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter File Number without special character !!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">File Number</label>
+                                    <nz-input-group nzPrefixIcon="file-text">
+                                        <input type="text" [(ngModel)]="transForm.fileNumber" formControlName="fileNumber" id="fileNumber" nz-input placeholder="Enter File Number" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+    <ng-template #footerTpl>
+        <div style="float: right">
+            <button nz-button style="margin-right: 8px;" (click)="close()">Cancel</button>
+            <button nz-button nzType="primary" style="background: #57B952; border-color: #57B952;" (click)="open2()"><i class="typcn typcn-eye mr-2"></i>Preview</button>
+        </div>
+    </ng-template>
+</nz-drawer>
+
+
+<!-- Drawer For Post Transaction-->
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="true" [nzWidth]="800" [nzVisible]="drawerOpen2" nzTitle="Transaction Preview" (nzOnClose)="close2()">
+    <form nz-form *nzDrawerContent>
+        <div class="col-md-12 col-lg-12 pl-0 pr-0">
+            <h4 style="padding-top: 5px;">AGIS Payment - Preview</h4>
+
+            <div class="col-md-12 col-lg-12" style="padding-bottom: 20px;">
+                <div class="az-content-label mg-b-5 mt-4 mb-3">-- Owner Details Section --</div>
+
+                <div class="row mt-4">
+                    <div class="col-md-12 d-flex pl-0 pr-0">
+                        <div class="col-md-6">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-user mr-2 forPreviewicon"></i>Full Name</label>
+                                <h6 class="forPreview ml-4">{{ transForm.nameOfPlotOwner }}</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pl-0">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-mail mr-2 forPreviewicon"></i>Email</label>
+                                <h6 class="forPreview ml-4">{{ transForm.emailOfPlotOwner }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12 d-flex pl-0 pr-0">
+                        <div class="col-md-6">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-phone-outline mr-2 forPreviewicon"></i>Phone Number</label>
+                                <h6 class="forPreview ml-4">{{ transForm.plotOwnerPhoneNumber }}</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pl-0">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-calendar-outline mr-2 forPreviewicon"></i>Date of Birth</label>
+                                <h6 class="forPreview ml-4">{{ transForm.dateOfBirth }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12 d-flex pl-0 pr-0">
+                        <div class="col-md-6">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-input-checked mr-2 forPreviewicon"></i>Occupation</label>
+                                <h6 class="forPreview ml-4">{{ transForm.occupation }}</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pl-0">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-location-outline mr-2 forPreviewicon"></i>Address</label>
+                                <h6 class="forPreview ml-4">{{ transForm.address }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12 d-flex pl-0 pr-0">
+                        <div class="col-md-6">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-sort-numerically mr-2 forPreviewicon"></i>ID Number</label>
+                                <h6 class="forPreview ml-4">{{ transForm.idNumber }}</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pl-0">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-sort-numerically-outline mr-2 forPreviewicon"></i>Plot Number</label>
+                                <h6 class="forPreview ml-4">{{ transForm.plotNumber }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12 d-flex pl-0 pr-0">
+                        <div class="col-md-6">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-puzzle-outline mr-2 forPreviewicon"></i>ID Type</label>
+                                <h6 class="forPreview ml-4">{{ transForm.idType }}</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pl-0">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-pi mr-2 forPreviewicon"></i>Cadestral Zone</label>
+                                <h6 class="forPreview ml-4">{{ transForm.cadestralZone }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="az-content-label mg-b-5 mt-5 mb-3">-- PAYMENT SECTION --</div>
+                <div class="row mt-4">
+                    <div class="col-md-12 d-flex pl-0 pr-0">
+                        <div class="col-md-6">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-calculator mr-2 forPreviewicon"></i>Amount</label>
+                                <h6 class="forPreview ml-4">{{ transForm.amount }}</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pl-0">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-document-text mr-2 forPreviewicon"></i>Narration</label>
+                                <h6 class="forPreview ml-4">{{ transForm.paymentDescription }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12 d-flex pl-0 pr-0">
+                        <div class="col-md-12">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-pin-outline mr-2 forPreviewicon"></i>Payment For</label>
+                                <h6 class="forPreview ml-4">{{ transForm.paymentFor }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12 d-flex pl-0 pr-0">
+                        <div class="col-md-6">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-user mr-2 forPreviewicon"></i>Depositor Name</label>
+                                <h6 class="forPreview ml-4">{{ transForm.depositorName }}</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pl-0">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-phone mr-2 forPreviewicon"></i>Depositor Phone No.</label>
+                                <h6 class="forPreview ml-4">{{ transForm.depositorPhoneNumber }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12 d-flex pl-0 pr-0">
+                        <div class="col-md-6">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-document mr-2 forPreviewicon"></i>Depositor Slip</label>
+                                <h6 class="forPreview ml-4">{{ transForm.depositorSlip }}</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pl-0">
+                            <div class="az-form-group" style="padding: 8px 15px !important;">
+                                <label class="forPreviewLabel"><i class="typcn typcn-sort-numerically-outline mr-2 forPreviewicon"></i>File Number</label>
+                                <h6 class="forPreview ml-4">{{ transForm.fileNumber }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row row-xs mt-3 mr-2">
+                <div class="col-sm-12 col-md-12">
+                    <button class="btn btn-success btn-with-icon float-right" (click)="postTransaction()"><i class="typcn typcn-plus"></i> Post Transaction</button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</nz-drawer>
+
+<!-- Drawer For Update Transaction-->
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="true" [nzWidth]="800" [nzVisible]="drawerOpen7" nzTitle="Update Transaction" (nzOnClose)="close7()">
+    <form nz-form *nzDrawerContent [formGroup]="transactionForm">
+        <div class="col-md-12 col-lg-12 pl-0 pr-0">
+            <h4 style="padding-top: 5px;">AGIS Payment - Update Transaction</h4>
+
+            <div class="col-md-12 col-lg-12" style="padding-bottom: 20px;">
+                <div class="az-content-label mg-b-5 mt-4 mb-3">-- Owner Details Section --</div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Name!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Full Name</label>
+                                    <nz-input-group nzPrefixIcon="user">
+                                        <input type="text" formControlName="nameOfPlotOwner" id="nameOfPlotOwner" nz-input placeholder="Enter Name" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Email!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Email</label>
+                                    <nz-input-group nzPrefixIcon="mail">
+                                        <input type="email" formControlName="emailOfPlotOwner" id="emailOfPlotOwner" nz-input placeholder="Enter Email" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Phone Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Phone Number</label>
+                                    <nz-input-group nzPrefixIcon="phone">
+                                        <input type="text" formControlName="plotOwnerPhoneNumber" id="plotOwnerPhoneNumber" nz-input placeholder="Enter Phone Number" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Date of Birth!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Date of Birth</label>
+                                    <nz-input-group nzPrefixIcon="calender">
+                                        <input type="date" formControlName="dateOfBirth" id="dateOfBirth" nz-input placeholder="Enter Date of Birth" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Occupation!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Occupation</label>
+                                    <nz-input-group nzPrefixIcon="shop">
+                                        <input type="text" formControlName="occupation" id="occupation" nz-input placeholder="Enter Occupation" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Address!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Address</label>
+                                    <nz-input-group nzPrefixIcon="home">
+                                        <input type="text" formControlName="address" id="address" nz-input placeholder="Enter Address" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your ID Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">ID Number</label>
+                                    <nz-input-group nzPrefixIcon="field-number">
+                                        <input type="text" formControlName="idNumber" id="idNumber" nz-input placeholder="Enter ID Number" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Plot Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Plot Number</label>
+                                    <nz-input-group nzPrefixIcon="field-binary">
+                                        <input type="text" formControlName="plotNumber" id="plotNumber" nz-input placeholder="Enter Plot Number" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <label class="form-label" style="font-weight: 600; color: darkslategray;">ID Type</label>
+                            <nz-select style="width: 100%;" nzShowSearch nzAllowClear formControlName="idType" id="idType" nzPlaceHolder="Select ID Type">
+                                <nz-option *ngFor="let list of allIdentityList" [nzValue]="list.name" [nzLabel]="list.name"></nz-option>
+                            </nz-select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <label class="form-label" style="font-weight: 600; color: darkslategray;">Cadestral Zone</label>
+                            <nz-select style="width: 100%;" nzShowSearch nzAllowClear formControlName="cadestralZone" id="cadestralZone" nzPlaceHolder="Select Cadestral Zone">
+                                <nz-option *ngFor="let list of allCadestralZoneList" [nzValue]="list.name" [nzLabel]="list.name"></nz-option>
+                            </nz-select>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="az-content-label mg-b-5 mt-5 mb-3">-- PAYMENT SECTION --</div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Amount!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Amount</label>
+                                    <nz-input-group nzPrefixIcon="bank">
+                                        <input type="number" formControlName="amount" id="amount" nz-input placeholder="Enter Amount" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Description!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Description</label>
+                                    <nz-input-group nzPrefixIcon="book">
+                                        <input type="text" formControlName="paymentDescription" id="paymentDescription" nz-input placeholder="Enter Description" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-12">
+                        <div class="az-form-group">
+                            <label class="form-label" style="font-weight: 600; color: darkslategray;">Payment For</label>
+                            <nz-select style="width: 100%;" nzShowSearch nzAllowClear formControlName="paymentFor" id="paymentFor" nzPlaceHolder="Select Payment For">
+                                <nz-option *ngFor="let list of allPaymentForList" [nzValue]="list.subHead" [nzLabel]="list.subHead"></nz-option>
+                            </nz-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Despositor Name!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Depositor Name</label>
+                                    <nz-input-group nzPrefixIcon="user">
+                                        <input type="text" formControlName="depositorName" id="depositorName" nz-input placeholder="Enter Despositor Name" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Despositor Phone Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Depositor Phone No.</label>
+                                    <nz-input-group nzPrefixIcon="phone">
+                                        <input type="text" formControlName="depositorPhoneNumber" id="depositorPhoneNumber" nz-input placeholder="Enter Despositor Phone Number" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Despositor Slip!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Depositor Slip</label>
+                                    <nz-input-group nzPrefixIcon="file-done">
+                                        <input type="text" formControlName="depositorSlip" id="depositorSlip" nz-input placeholder="Enter Despositor Slip" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter File Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">File Number</label>
+                                    <nz-input-group nzPrefixIcon="file-text">
+                                        <input type="text" formControlName="fileNumber" id="fileNumber" nz-input placeholder="Enter File Number" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row row-xs mt-3 mr-2">
+                <div class="col-sm-12 col-md-12">
+                    <button class="btn btn-success btn-with-icon float-right mr-3" (click)="updateTransaction()"><i class="typcn typcn-tick-outline"></i> Update Transaction</button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</nz-drawer>
+
+<!-- Drawer For Transaction Details-->
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="true" [nzWidth]="800" [nzVisible]="drawerOpen3" nzTitle="Transaction Details" (nzOnClose)="close3()">
+    <form nz-form *nzDrawerContent [formGroup]="transactionForm">
+        <div class="col-md-12 col-lg-12 pl-0 pr-0">
+            <h4 style="padding-top: 5px;">AGIS Payment - Transaction</h4>
+
+            <div class="col-md-12 col-lg-12" style="padding-bottom: 20px;">
+                <div class="az-content-label mg-b-5 mt-4 mb-3">-- Owner Details Section --</div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Name!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Full Name</label>
+                                    <nz-input-group nzPrefixIcon="user">
+                                        <input type="text" formControlName="nameOfPlotOwner" id="nameOfPlotOwner" nz-input placeholder="Enter Name" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Email!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Email</label>
+                                    <nz-input-group nzPrefixIcon="mail">
+                                        <input type="email" formControlName="emailOfPlotOwner" id="emailOfPlotOwner" nz-input placeholder="Enter Email" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Phone Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Phone Number</label>
+                                    <nz-input-group nzPrefixIcon="phone">
+                                        <input type="text" formControlName="plotOwnerPhoneNumber" id="plotOwnerPhoneNumber" nz-input placeholder="Enter Phone Number" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Date of Birth!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Date of Birth</label>
+                                    <nz-input-group nzPrefixIcon="calender">
+                                        <input type="date" formControlName="dateOfBirth" id="dateOfBirth" nz-input placeholder="Enter Date of Birth" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Occupation!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Occupation</label>
+                                    <nz-input-group nzPrefixIcon="shop">
+                                        <input type="text" formControlName="occupation" id="occupation" nz-input placeholder="Enter Occupation" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Address!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Address</label>
+                                    <nz-input-group nzPrefixIcon="home">
+                                        <input type="text" formControlName="address" id="address" nz-input placeholder="Enter Address" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your ID Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">ID Number</label>
+                                    <nz-input-group nzPrefixIcon="field-number">
+                                        <input type="text" formControlName="idNumber" id="idNumber" nz-input placeholder="Enter ID Number" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Plot Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Plot Number</label>
+                                    <nz-input-group nzPrefixIcon="field-binary">
+                                        <input type="text" formControlName="plotNumber" id="plotNumber" nz-input placeholder="Enter Plot Number" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Plot Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">ID Type</label>
+                                    <nz-input-group nzPrefixIcon="diff">
+                                        <input type="text" formControlName="idType" id="idType" nz-input placeholder="Enter ID Type" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Plot Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Cadestral Zone</label>
+                                    <nz-input-group nzPrefixIcon="border-horizontal">
+                                        <input type="text" formControlName="cadestralZone" id="cadestralZone" nz-input placeholder="Enter Cadestral Zone" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="az-content-label mg-b-5 mt-5 mb-3">-- PAYMENT SECTION --</div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Amount!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Amount</label>
+                                    <nz-input-group nzPrefixIcon="bank">
+                                        <input type="number" formControlName="amount" id="amount" nz-input placeholder="Enter Amount" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Description!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Description</label>
+                                    <nz-input-group nzPrefixIcon="book">
+                                        <input type="text" formControlName="paymentDescription" id="paymentDescription" nz-input placeholder="Enter Description" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-12">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter your Plot Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Payment For</label>
+                                    <nz-input-group nzPrefixIcon="inbox">
+                                        <input type="text" formControlName="paymentFor" id="paymentFor" nz-input placeholder="Enter Payment For" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Despositor Name!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Depositor Name</label>
+                                    <nz-input-group nzPrefixIcon="user">
+                                        <input type="text" formControlName="depositorName" id="depositorName" nz-input placeholder="Enter Despositor Name" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Despositor Phone Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Depositor Phone No.</label>
+                                    <nz-input-group nzPrefixIcon="phone">
+                                        <input type="text" formControlName="depositorPhoneNumber" id="depositorPhoneNumber" nz-input placeholder="Enter Despositor Phone Number" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-6">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Despositor Slip!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Depositor Slip</label>
+                                    <nz-input-group nzPrefixIcon="file-done">
+                                        <input type="text" formControlName="depositorSlip" id="depositorSlip" nz-input placeholder="Enter Despositor Slip" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter File Number!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">File Number</label>
+                                    <nz-input-group nzPrefixIcon="file-text">
+                                        <input type="text" formControlName="fileNumber" id="fileNumber" nz-input placeholder="Enter File Number" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-xs mt-3">
+                    <div class="col-md-12 mg-t-20 mg-md-t-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter Comment!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Comment</label>
+                                    <textarea rows="3" formControlName="comment" id="comment" nz-input placeholder="Comment"></textarea>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row row-xs mt-3 mr-2">
+                <div class="col-sm-12 col-md-12">
+                    <button class="btn btn-danger btn-with-icon float-right" *ngIf="permissionList.indexOf('CANAPPROVETRANSACTION') > -1" (click)="rejectTransaction()"><i class="typcn typcn-times-outline"></i> Reject</button>
+                    <button class="btn btn-success btn-with-icon float-right mr-3" *ngIf="permissionList.indexOf('CANAPPROVETRANSACTION') > -1" (click)="approveTransaction()"><i class="typcn typcn-tick-outline"></i> Approve</button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</nz-drawer>

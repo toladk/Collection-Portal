@@ -1,0 +1,308 @@
+<div class="az-content-header">
+    <div class="col-md-12 pl-0 mt-3 mb-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-style1 mg-b-0 pl-0">
+                <li class="breadcrumb-item"><a href="#">Receipts</a></li>
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Receipt</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="az-content-header-top">
+
+        <div>
+            <h2 class="az-content-title mg-b-5 mg-b-lg-8">Receipts</h2>
+            <!-- <p class="mg-b-0">Get transaction.</p> -->
+        </div>
+    </div>
+    <!-- az-content-body-title -->
+
+    <div class="nav-wrapper">
+
+        <nav class="nav az-nav-line">
+            <a href="javascript::void(0)" *ngIf="indextab == 'First-content'" (click)="tab('firstTab')" class="nav-link active">Transactions</a>
+            <a href="javascript::void(0)" *ngIf="indextab != 'First-content'" (click)="tab('firstTab')" class="nav-link">Transactions</a>
+        </nav>
+
+    </div>
+</div>
+
+
+
+
+
+<div class="az-content-body">
+
+    <div class="" *ngIf="indextab == 'First-content'">
+        <div class="col-md-12 col-lg-12 card mg-t-10">
+            <form [formGroup]="receiptTransForm">
+                <div class="col-md-12 pr-0 pl-0 d-flex mt-3 mb-3">
+                    <div class="col-md-3 pl-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please input  value!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">Filter By</label>
+                                    <nz-input-group nzPrefixIcon="filter">
+                                        <input formControlName="tranStatus" nz-input placeholder="Pending" [ngModel]="bindApproved" readonly/>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-3 pl-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter From Date!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">From Date</label>
+                                    <nz-input-group nzPrefixIcon="right-square">
+                                        <input type="date" formControlName="fromDate" nz-input placeholder="Enter Date" />
+                                        <!-- <nz-date-picker formControlName="fromDate" nzBorderless></nz-date-picker> -->
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-3 pl-0">
+                        <div class="az-form-group">
+                            <nz-form-item style="margin-bottom: 9px !important;">
+                                <nz-form-control nzErrorTip="Please enter To Date!">
+                                    <label class="form-label" style="font-weight: 600; color: darkslategray;">To Date</label>
+                                    <nz-input-group nzPrefixIcon="left-square">
+                                        <input type="date" formControlName="toDate" nz-input placeholder="Enter Date" />
+                                        <!-- <nz-date-picker formControlName="toDate" nzBorderless></nz-date-picker> -->
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="col-md-3 pr-0">
+                        <div class="float-right mt-4"><button class="btn btn-success btn-with-icon btn-block" [disabled]="!receiptTransForm.valid" (click)="getAllTransactions()"><i class="typcn typcn-zoom"></i> Get Transactions</button></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="col-md-12 col-lg-12 card mg-t-30">
+            <div class="col-md-12">
+                <div class="col-md-12 pl-0 pr-0 d-flex mt-4 mb-5">
+                    <div class="col-md-8 pl-0">
+                        <div class="az-content-label pt-3">Transaction List</div>
+                    </div>
+                    <div class="col-md-4 pl-0 pr-0 mt-1">
+                        <nz-input-group [nzSuffix]="suffixIconSearch">
+                            <input type="text" [(ngModel)]="searchValue" nz-input placeholder="Search" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <i nz-icon nzType="search"></i>
+                        </ng-template>
+                    </div>
+                </div>
+
+                <div class="table-responsive mb-4" *ngIf="this.allTransactionList.length > 0">
+                    <table class="table table-hover mg-b-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th (click)="sort('applicationName')" style="cursor: pointer;">Applicant Name <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('applicationType')" style="cursor: pointer;">App Type <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('branchName')" style="cursor: pointer;">Branch <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('phoneNumber')" style="cursor: pointer;">Phone Number <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('tellerTill')" style="cursor: pointer;">Till <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of allTransactionList | searchfilterforarena: searchValue | paginate: {itemsPerPage: 10 , currentPage: pagination} | orderBy: key: reverse; let i = index">
+                                <th scope="row">{{ i+1}}</th>
+                                <td>{{ data.applicantName }}</td>
+                                <td>{{ data.applicationType }}</td>
+                                <td>{{ data.branchName }}</td>
+                                <td>{{ data.phoneNumber }}</td>
+                                <td>{{ data.tellerTill }}</td>
+                                <td>
+                                    <button nz-button nzType="primary" [nzSize]="size" nzTooltipTitle="view receipt" nzTooltipPlacement="rightTop" nz-button nz-tooltip (click)="getTransactionById(data.id)"><i nz-icon nzType="eye"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 mt-4 mb-0">
+                        <div class="row d-flex">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 mb-0">
+                                <p>Total Pending Transactions: {{ allTransactionList.length }}</p>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 mb-0">
+                                <pagination-controls (pageChange)="pagination = $event" class="float-right"></pagination-controls>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- table-responsive -->
+
+                <div class="table-responsive mb-4" *ngIf="this.allTransactionList.length < 1">
+                    <table class="table table-hover mg-b-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th (click)="sort('applicationName')" style="cursor: pointer;">Applicant Name <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('applicationType')" style="cursor: pointer;">App Type <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('branchName')" style="cursor: pointer;">Branch <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('phoneNumber')" style="cursor: pointer;">Phone Number <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                                <th (click)="sort('tellerTill')" style="cursor: pointer;">Till <i nz-icon nzType="sort-ascending" nzTheme="outline" class="ml-2"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="10" class="text-center">
+                                    <div class="text-center mt-5 mg-b-30" *ngIf="isShown">
+                                        <div class="spinner-border">
+                                            <span class="sr-only"></span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 mb-3 font-23" *ngIf="!isShown2">
+                                        <h6 class="col-green">Get Data by filtering <b>From Date - To Date</b></h6>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 mt-4 mb-0">
+                        <div class="row d-flex">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 mb-0">
+                                <p>Total Pending Transactions: {{ allTransactionList.length }}</p>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 mb-0">
+                                <pagination-controls (pageChange)="pagination = $event" class="float-right"></pagination-controls>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- table-responsive -->
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+</div>
+<!-- az-content-body -->
+
+
+<!-- Drawer For Receipt-->
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="true" [nzWidth]="970" [nzVisible]="drawerOpen" nzTitle="Receipt" (nzOnClose)="close()">
+
+    <div class="row pd-b-10">
+        <div class="col-md-12">
+            <div class="page-content">
+                <div class="page-header text-blue-d2">
+                    <h5 class="page-title text-secondary-d1">
+                        Invoice
+                        <!-- <small class="page-info">
+                      ID: #HB-2838KJSDH8WE
+                  </small> -->
+                    </h5>
+
+                    <div class="page-tools d-flex">
+                        <!-- <div class="action-buttons mr-2">
+                    <button class="btn btn-info btn-with-icon btn-block" printSectionId="PrintFile" ngxPrint><i class="typcn typcn-printer"></i>Print</button>
+                  </div> -->
+                        <div class="action-buttons">
+                            <button class="btn btn-success btn-with-icon btn-block" (click)="openPDF()"><i class="typcn typcn-export"></i>Print</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-0" id="PrintFile">
+                    <div class="row mt-4 pl-3 pr-3">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="text-center text-150">
+                                        <img src="assets/img/icons/new-logo.png"> &nbsp;
+                                        <span class="text-default-d3 text-success">Heritage Bank Nigeria</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- .row -->
+
+                            <hr class="row brc-default-l1 mx-n1 mb-4" />
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div>
+                                        <span class="text-sm text-grey-m2 align-middle">Branch Name:</span>
+                                        <span class="text-600 text-110 text-blue align-middle"> {{ transactionById?.branchName }}</span>
+                                    </div>
+                                    <div class="text-grey-m2">
+                                        <!-- <div class="my-1">
+                                    1, Wale Balogun Close, Hopeville estate, Haruna Bus stop
+                                  </div> -->
+                                        <div class="my-1">
+                                            <span class="text-sm text-grey-m2 align-middle mr-2">Depositor Phone No:</span>
+                                            <span> <b class="text-600">{{ transactionById?.phoneNumber }}</b></span>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <span class="text-sm text-grey-m2 align-middle">Deposit Slip No:</span>
+                                        <span class="text-600 text-110 text-blue align-middle">  {{ transactionById?.depositSlipNo }} </span>
+                                    </div>
+                                </div>
+                                <!-- /.col -->
+
+                                <div class="text-95 col-sm-6 align-self-start d-sm-flex justify-content-end">
+                                    <hr class="d-sm-none" />
+                                    <div class="text-grey-m2">
+                                        <div class="mt-1 mb-2 text-secondary-m1 text-600 text-125">
+                                            Invoice
+                                        </div>
+
+                                        <div class="my-2"><i class="typcn typcn-media-record text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Created date:</span> {{ transactionById?.createdOn | date: 'dd/MM/yyyy' }}</div>
+
+                                        <div class="my-2"><i class="typcn typcn-media-record text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Teller ID:</span> {{ transactionById?.tellerId }}</div>
+
+                                        <div class="my-2"><i class="typcn typcn-media-record text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Status:</span> <span class="badge badge-success badge-pill px-25 ml-2"> {{ transactionById?.payArenaRemark}}</span></div>
+                                    </div>
+                                </div>
+                                <!-- /.col -->
+                            </div>
+
+                            <div class="mt-5">
+
+                                <div class="table-responsive mb-4" *ngIf="this.allTransactionList.length > 0">
+                                    <table class="table table-hover mg-b-0">
+                                        <thead>
+                                            <tr>
+                                                <th (click)="sort('applicationName')" style="cursor: pointer;">Full Name</th>
+                                                <th (click)="sort('applicationType')" style="cursor: pointer;">Service</th>
+                                                <th (click)="sort('branchName')" style="cursor: pointer;">Paid Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>{{ transactionById?.applicantName }}</td>
+                                                <td>{{ transactionById?.applicationType}}</td>
+                                                <td>{{ transactionById?.amount | currency:'NGN':'symbol-narrow' }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- table-responsive -->
+
+                                <hr />
+
+                                <!-- <div>
+                              <span class="text-secondary-d1 text-105">Thank you for your business</span>
+                              <a href="#" class="btn btn-info btn-bold px-4 float-right mt-3 mt-lg-0">Pay Now</a>
+                          </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</nz-drawer>

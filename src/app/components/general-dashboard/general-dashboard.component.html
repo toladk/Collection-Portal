@@ -1,0 +1,109 @@
+<ngx-ui-loader [fgsColor]="'#02A51D'"></ngx-ui-loader>
+<div class="az-content az-content-dashboard-eight">
+    <div class="container d-block">
+        <h2 class="az-content-title tx-24 mg-b-5">Welcome Back to Collection Portal !!!</h2>
+        <p class="mg-b-20 mg-lg-b-25"> Here are list of Applications you have Permission too !!!</p>
+
+        <div class="row row-sm mg-b-20">
+            <div class="col-lg-12">
+                <div class="row row-xs row-sm--sm" id="item">
+
+                    <ng-container *ngFor="let item of roles; let r=index">
+                        <div class="col-sm-6 col-md-3 mt-4" *ngIf="item.applicationName == 'CALPAY'">
+                            <div class="card card-dashboard-seventeen bg-success tx-white">
+                                <img class="img-fluid" src="assets/img/payment/payment1.png" style=" overflow: hidden; width: 100%; height: 150px;" alt="Image">
+                                <div class="card-img-overlay pd-30 bg-black-4 d-flex flex-column justify-content-center">
+                                    <h4 class="text-white">Cal Pay</h4>
+                                    <span>Description</span>
+                                </div>
+                                <div class="card-footer bd-t tx-center">
+                                    <a href="javascript::void(0)" (click)="OnRoute(item.applicationName, r)" class="text-white"> Launch </a>
+                                </div>
+                            </div>
+                            <!-- card -->
+                        </div>
+                        <!-- col -->
+
+                        <div class="col-sm-6 col-md-3 mt-4" *ngIf="item.applicationName == 'InfinitiPay'">
+                            <!-- <div class="col-sm-6 col-md-3 mg-t-20 mg-md-t-0" *ngIf="item.applicationName == 'CENTRALADMINAPP'"> -->
+                            <div class="card card-dashboard-seventeen bg-info tx-white">
+                                <img class="img-fluid" style="width:100%" style=" overflow: hidden; width: 100%; height: 150px;" src="assets/img/payment/payment3.png" alt="Image">
+                                <div class="card-img-overlay pd-30 bg-black-4 d-flex flex-column justify-content-center">
+                                    <h4 class="text-white">Infinity Pay</h4>
+                                    <span class="op-7">Description</span>
+                                </div>
+                                <div class="card-footer bd-t tx-center">
+                                    <a href="javascript::void(0)" (click)="OnRoute(item.applicationName, r)" class="text-white"> Launch </a>
+                                </div>
+                            </div>
+                            <!-- card-body -->
+                        </div>
+                        <!-- card -->
+
+                        <div class="col-sm-6 col-md-3 mt-4" *ngIf="item.applicationName == 'PAYARENA'">
+                            <div class="card card-dashboard-seventeen bg-primary tx-white">
+                                <img class="img-fluid" style=" overflow: hidden; width: 100%; height: 150px;" src="assets/img/payment/payment4.png" alt="Image">
+
+                                <div class="card-img-overlay pd-30 bg-black-4 d-flex flex-column justify-content-center">
+                                    <h4 class="text-white">Pay Arena</h4>
+                                    <span class="op-7">Description</span>
+                                </div>
+                                <div class="card-footer bd-t tx-center">
+                                    <a href="javascript::void(0)" (click)="OnRoute(item.applicationName, r)" class="text-white"> Launch </a>
+                                </div>
+                            </div>
+                            <!-- card-body -->
+                        </div>
+
+                        <div class="col-sm-6 col-md-3 mt-4" *ngIf="item.applicationName == 'AGISPAY'">
+                            <div class="card card-dashboard-seventeen bg-danger tx-white">
+
+                                <img class="img-fluid" style=" overflow: hidden; width: 100%; height: 150px;" src="assets/img/payment/payment5.jpg" alt="Image">
+
+                                <div class="card-img-overlay pd-30 bg-black-4 d-flex flex-column justify-content-center">
+                                    <h4 class="text-white">AGIS Pay</h4>
+                                    <span>Description</span>
+                                </div>
+                                <div class="card-footer bd-t tx-center">
+                                    <a href="javascript::void(0)" (click)="OnRoute(item.applicationName, r)" class="text-white"> Launch </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-3 mt-4" *ngIf="item.applicationName == 'REMITTA'">
+                            <div class="card card-dashboard-seventeen bg-warning tx-white">
+
+                                <img class="img-fluid" style=" overflow: hidden; width: 100%; height: 150px;" src="assets/img/payment/payment5.jpg" alt="Image">
+
+                                <div class="card-img-overlay pd-30 bg-black-4 d-flex flex-column justify-content-center">
+                                    <h4 class="text-white">Remita Pay</h4>
+                                    <span>Description</span>
+                                </div>
+                                <div class="card-footer bd-t tx-center">
+                                    <a href="javascript::void(0)" (click)="OnRoute(item.applicationName, r)" class="text-white"> Launch </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-3 mt-4" *ngIf="item.applicationName == 'EBSPAYAPP'">
+                            <div class="card card-dashboard-seventeen bg-info tx-white">
+
+                                <img class="img-fluid" style=" overflow: hidden; width: 100%; height: 150px;" src="assets/img/payment/payment3.png" alt="Image">
+
+                                <div class="card-img-overlay pd-30 bg-black-4 d-flex flex-column justify-content-center">
+                                    <h4 class="text-white">EBS Pay</h4>
+                                    <span>Description</span>
+                                </div>
+                                <div class="card-footer bd-t tx-center">
+                                    <a href="javascript::void(0)" (click)="OnRoute(item.applicationName, r)" class="text-white"> Launch </a>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- container -->
+</div>
+<!-- az-content -->

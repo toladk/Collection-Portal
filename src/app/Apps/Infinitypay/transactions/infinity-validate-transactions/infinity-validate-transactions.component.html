@@ -1,0 +1,958 @@
+<div class="az-content-header">
+    <div class="az-content-header-top">
+        <div>
+            <h2 class="az-content-title mg-b-5 mg-b-lg-8">Transactions Management</h2>
+            <p class="mg-b-0">Get transaction.</p>
+        </div>
+        <div class="az-dashboard-date">
+            <div class="date">
+                <div class="float-right"><button class="btn btn-success btn-with-icon btn-block" (click)="open()"><i class="typcn typcn-plus"></i>Validate</button></div>
+            </div>
+            <!-- az-dashboard-date -->
+            <!-- <i class="icon ion-md-arrow-forward"></i> -->
+            <!-- <div class="date">
+        <button nz-button nzType="primary" [routerLink]= "['/manage-payments', {outlets: {payments: ['view-payments']}}]">Transactions</button>
+      </div> -->
+        </div>
+        <!-- az-dashboard-date -->
+    </div>
+    <!-- az-content-body-title -->
+
+    <div class="nav-wrapper">
+
+        <nav class="nav az-nav-line">
+            <a href="javascript::void(0)" [routerLink]="['/validate-transaction', 'all-transactions']" routerLinkActive="active" class="nav-link">All Transactions</a>
+            <a href="javascript::void(0)" [routerLink]="['/validate-transaction', 'pending-transactions']" routerLinkActive="active" class="nav-link">Pending Transactions</a>
+            <a href="javascript::void(0)" [routerLink]="['/validate-transaction', 'approved-transactions']" routerLinkActive="active" class="nav-link">Approved Transactions</a>
+        </nav>
+
+    </div>
+
+    <nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzWidth]="720" [nzVisible]="visible" nzTitle="Add New Transaction" [nzFooter]="footerTpl" (nzOnClose)="close()">
+        <!-- <div class="az-content-label mg-b-5">Create Student</div>
+<p class="mg-b-20">Student.</p> -->
+        <form #signupForm=ngForm (ngSubmit)="onSubmit()">
+            <ngx-ui-loader [loaderId]="'loader-01'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+            <div *ngIf="index == 'First-content'">
+                <div class="pd-30 pd-sm-40 bg-gray-200">
+
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0"></label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+
+                            <div class="alert alert-danger" [hidden]="!error">
+                                {{error}}
+                            </div>
+                            <div class="alert alert-success" [hidden]="!success">
+                                {{success}}
+                            </div>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Validate Transaction</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter Student Matric Number" name="transref" [(ngModel)]="validate.transref" required>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+                </div>
+            </div>
+            <div class="steps-content" *ngIf="index == 'Second-content'">
+                <div class="pd-30 pd-sm-40 bg-gray-100">
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Creditor Name</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter Credit Account Name" name="creditAccountName" [(ngModel)]="form.creditAccountName">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Credit Account Number</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" name="creditAccountNumber" [(ngModel)]="form.creditAccountNumber">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Debit Account Name</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter Debit Account Name" name="debitAccountName" [(ngModel)]="form.debitAccountName">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Debit Account Number</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter debit Account Number" name="debitAccountNumber" [(ngModel)]="form.debitAccountNumber">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">customer Account Number</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter customer Account Number" name="customerAccountNumber" [(ngModel)]="form.customerAccountNumber">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Customer Narration</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter customerNarration" name="customerNarration" [(ngModel)]="form.customerNarration">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Bank Name</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="BankName" name="bankName" [(ngModel)]="form.bankName">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Branch Branch Name</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter branch Name" name="branchName" [(ngModel)]="form.branchName">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Bank UniqueRe ference</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter bankUniqueReference" name="bankUniqueReference" [(ngModel)]="form.bankUniqueReference">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Expected Amount</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Expected Amount" name="" [(ngModel)]="form.expectedAmount">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Actual Amount</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter Actual Amount" name="actualAmount" [(ngModel)]="form.actualAmount">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Teller</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter teller" name="teller" [(ngModel)]="form.teller">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">ExpectedDate</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter ExpectedDate" name="expectedDate" [(ngModel)]="form.expectedDate">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Unique Deposit Reference</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter Unique Deposit Reference" name="uniqueDepositReference" [(ngModel)]="form.uniqueDepositReference">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">cbn Code</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter cbnCode" name="cbnCode" [(ngModel)]="form.cbnCode">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Debit Date</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter debitDate" name="debitDate" [(ngModel)]="form.debitDate">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <!--
+      <button class="btn btn-az-primary pd-x-30 mg-r-5">Register</button>
+      <button class="btn btn-dark pd-x-30">Cancel</button> -->
+                </div>
+
+            </div>
+            <ng-template #footerTpl>
+                <div style="float: right">
+                    <button class="btn btn-dark pd-x-30 mg-r-5" (click)="close()">Cancel</button>
+                    <button class="btn btn-warning pd-x-30 mg-r-5" *ngIf="current == 1" (click)="back()">Back</button>
+                    <!-- <button class="btn btn-az-primary pd-x-30 mg-r-5" *ngIf="current == 0" (click)="next()">Validate</button> -->
+                    <button class="btn btn-az-primary pd-x-30 mg-r-5" *ngIf="current == 0" (click)="validateNow()">Validate</button>
+                    <button class="btn btn-success pd-x-30 mg-r-5" *ngIf="current == 1 && !disabled && actionBotton == 'create'" (click)="onSubmit()" [disabled]="!signupForm.valid">Submit Now</button>
+                    <button class="btn btn-success pd-x-30 mg-r-5" *ngIf="current == 1 && !disabled && actionBotton == 'update'" (click)="onUpdate()" [disabled]="!signupForm.valid">Update Now</button>
+                    <button class="btn btn-success pd-x-30 mg-r-5" *ngIf="current == 1 && disabled" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Loading...
+      </button>
+
+                </div>
+            </ng-template>
+        </form>
+
+        <div class="steps-content" *ngIf="index == 'third-content'">
+            <div class="pd-30 pd-sm-40 bg-gray-100">
+                <nz-result *ngIf="Status == 200" nzStatus="success" nzTitle="Successfully New Student Created!" nzSubTitle="New Student: {{ newresponse }}">
+                    <div nz-result-extra>
+                        <button nz-button nzType="primary">Go Payment</button>
+                        <button nz-button (click)="again()">Create Another</button>
+                    </div>
+                </nz-result>
+
+
+                <nz-result *ngIf="valueIsSuccess == true" nzTitle="Submission Failed" nzStatus="error" nzSubTitle="Please check and modify the following information before resubmitting.">
+                    <div nz-result-content>
+                        <div class="desc">
+                            <h4 nz-title>The content you submitted has the following error:</h4>
+                            <ng-container *ngFor="let list of newresponse">
+                                <p nz-paragraph style="color: crimson;">
+                                    <i nz-icon nzType="close-circle"></i> {{ list.error }}: <a>{{ list.field }} &gt;</a>
+                                </p>
+                            </ng-container>
+
+                        </div>
+                    </div>
+                    <div nz-result-extra>
+                        <button nz-button nzType="primary" (click)="back()">Go Back</button>
+                        <button nz-button (click)="again()">Create Another</button>
+                    </div>
+                </nz-result>
+
+
+            </div>
+        </div>
+    </nz-drawer>
+</div>
+
+
+<div class="az-content-body">
+
+    <div class="steps-content" *ngIf="indextab == 'First-content'">
+        <ngx-ui-loader [loaderId]="'loader-02'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+        <div class="pd-10 pd-t-20 bg-gray-100">
+            <div class="row pd-b-10">
+                <div class="col-md-4">
+                    <div class="az-content-label pt-3">Total Transaction: {{ totalCount }} / {{ listOfData.length }}</div>
+                </div>
+
+                <div class="float-right col-md-8 mt-1">
+
+                    <div class="az-header-center">
+
+                        <input type="search" id="item_search" [(ngModel)]="search.student" class="form-control" placeholder="Search for Student...">
+                        <button class="btn" style="margin-right: 30px;" (click)="onSearch()"><i class="typcn typcn-zoom"></i></button>
+                        <button class="btn" (click)="onSearchCouncle()"><i class="typcn typcn-times"></i></button>
+
+                    </div>
+                    <!-- az-header-center -->
+                </div>
+            </div>
+
+            <nz-table #nzTable [nzData]="listOfData" nzTableLayout="fixed" [nzLoading]="loading" [nzTotal]="total">
+                <thead>
+                    <tr>
+                        <th nzWidth="60px">S/N</th>
+                        <th>Name </th>
+                        <th>Debit Account</th>
+                        <th>Credit Account</th>
+                        <th>Bank</th>
+                        <th>Status</th>
+                        <th nzRight>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="item3">
+                    <ng-container *ngFor="let data of nzTable.data">
+                        <tr>
+                            <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+                            <td nzLeft nzWidth="200px">{{ data.debitAccountName }}</td>
+                            <td>{{ data.debitAccountNumber }}</td>
+                            <td>{{ data.creditAccountNumber }}</td>
+                            <td>{{ data.bankName }}</td>
+                            <td>
+                                <span *ngIf="data.status == 'Pending'" class="badge badge-warning">{{ data.status }}</span>
+                                <span *ngIf="data.status != 'Pending'" class="badge badge-success">{{ data.status }}</span>
+                            </td>
+                            <td nzRight>
+                                <div class="btn-icon-list">
+                                    <button class="btn btn-info btn-icon" (click)="openUpdate(data.Id)"><i class="typcn typcn-eye"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [nzExpand]="expandSet.has(data.id)">
+                            <div class="az-content-label mg-b-5">More Details</div>
+
+                            <div class="table-responsive">
+                                <table class="table mg-b-0">
+                                    <!-- <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Header</th>
+                    <th>Value</th>
+                  </tr>
+                </thead> -->
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Depositor Name</td>
+                                            <td>{{ data.debitAccountName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Depositor Account</td>
+                                            <td>{{ data.debitAccountNumber }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Creditor Account Name</td>
+                                            <td>{{ data.creditAccountName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Credit Account Number</td>
+                                            <td>{{ data.creditAccountNumber }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Bank Name</td>
+                                            <td>{{ data.bankName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Branch Name</td>
+                                            <td>{{ data.branchName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Branch Name</td>
+                                            <td>{{ data.branchName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Actual Amount</td>
+                                            <td>{{ data.actualAmount }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Charges</td>
+                                            <td>{{ data.charges }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Bank Unique Reference</td>
+                                            <td>{{ data.bankUniqueReference }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Customer Narration</td>
+                                            <td>{{ data.customerNarration }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Finacle Ref</td>
+                                            <td>{{ data.isoReference }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Teller</td>
+                                            <td>{{ data.teller }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Unique Deposit Reference</td>
+                                            <td>{{ data.uniqueDepositReference }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Debit Date</td>
+                                            <td>{{ data.debitDate }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Confirm By</td>
+                                            <td>{{ data.confirmBy }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Status</td>
+                                            <td>
+                                                <span *ngIf="data.status == 'Pending'" class="badge badge-warning">{{ data.status }}</span>
+                                                <span *ngIf="data.status != 'Pending'" class="badge badge-success">{{ data.status }}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td>ConfirmOn</td>
+                                                <td>{{ data.confirmOn }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td>Expected Date</td>
+                                                <td>{{ data.expectedDate }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td>Validate By</td>
+                                                <td>{{ data.validateBy }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td>ValidateOn</td>
+                                                <td>{{ data.validateOn }}</td>
+                                            </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- table-responsive -->
+                            </tr>
+                    </ng-container>
+                </tbody>
+            </nz-table>
+        </div>
+    </div>
+
+    <div class="steps-content" *ngIf="indextab == 'Second-content'">
+
+        <ngx-ui-loader [loaderId]="'loader-03'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+        <div class="pd-10 pd-t-20 bg-gray-100">
+            <div class="row pd-b-10">
+                <div class="col-md-4">
+                    <div class="az-content-label pt-3">Tatal Pending Transaction: {{ totalCount }} / {{ totalPendingtransactions }}</div>
+                </div>
+
+
+                <div class="float-right col-md-3 mt-1">
+                    <div class="wd-200 mg-b-20">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                </div>
+                            </div>
+                            <input type="date" name="DateFrom" [(ngModel)]="dateSearch.DateFrom" class="form-control fc-datepicker" placeholder="MM/DD/YYYY">
+                        </div>
+                    </div>
+                    <!-- wd-200 -->
+                </div>
+
+                <div class="float-right col-md-3 mt-1">
+                    <div class="wd-200 mg-b-20">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                </div>
+                            </div>
+                            <input type="date" name="DateTo" [(ngModel)]="dateSearch.DateTo" class="form-control fc-datepicker" placeholder="MM/DD/YYYY">
+                        </div>
+                    </div>
+                    <!-- wd-200 -->
+                </div>
+
+                <div class="float-right col-md-2 mt-1">
+
+                    <button class="btn btn-az-primary btn-block" (click)="searchData()">Search</button>
+                </div>
+
+                <!-- <div class="float-right col-md-8 mt-1">
+
+        <div class="az-header-center">
+
+          <input type="search" id="item_search" [(ngModel)]="search.student" class="form-control" placeholder="Search for Student...">
+          <button class="btn" style="margin-right: 30px;" (click)="onSearch()"><i class="typcn typcn-zoom"></i></button>
+          <button class="btn" (click)="onSearchCouncle()"><i class="typcn typcn-times"></i></button>
+
+        </div>
+      </div> -->
+            </div>
+
+            <nz-table #nzTable2 [nzData]="Pendingtransactions" nzTableLayout="fixed" [nzLoading]="loading" [nzTotal]="totalPendingtransactions">
+                <thead>
+                    <tr>
+                        <th nzWidth="60px">S/N</th>
+                        <th>Name </th>
+                        <th>Debit Account</th>
+                        <th>Credit Account</th>
+                        <th>Bank</th>
+                        <th>Status</th>
+                        <th nzRight>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="item2">
+                    <ng-container *ngFor="let data of nzTable2.data">
+                        <tr>
+                            <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+                            <td nzLeft nzWidth="200px">{{ data.debitAccountName }}</td>
+                            <td>{{ data.debitAccountNumber }}</td>
+                            <td>{{ data.creditAccountNumber }}</td>
+                            <td>{{ data.bankName }}</td>
+                            <td>
+                                <span *ngIf="data.status == 'Pending'" class="badge badge-warning">{{ data.status }}</span>
+                                <span *ngIf="data.status != 'Pending'" class="badge badge-success">{{ data.status }}</span>
+                            </td>
+                            <td nzRight>
+                                <div class="btn-icon-list">
+                                    <button class="btn btn-success btn-icon" (click)="openUpdate(data.Id)"><i class="typcn typcn-thumbs-up"></i></button>
+                                    <button class="btn btn-danger btn-icon" (click)="warning(data.Id)"><i class="typcn typcn-thumbs-down"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [nzExpand]="expandSet.has(data.id)">
+                            <div class="az-content-label mg-b-5">More Details</div>
+
+                            <div class="table-responsive">
+                                <table class="table mg-b-0">
+                                    <!-- <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Header</th>
+                    <th>Value</th>
+                  </tr>
+                </thead> -->
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Depositor Name</td>
+                                            <td>{{ data.debitAccountName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Depositor Account</td>
+                                            <td>{{ data.debitAccountNumber }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Creditor Account Name</td>
+                                            <td>{{ data.creditAccountName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Credit Account Number</td>
+                                            <td>{{ data.creditAccountNumber }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Bank Name</td>
+                                            <td>{{ data.bankName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Branch Name</td>
+                                            <td>{{ data.branchName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Branch Name</td>
+                                            <td>{{ data.branchName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Actual Amount</td>
+                                            <td>{{ data.actualAmount }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Charges</td>
+                                            <td>{{ data.charges }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Bank Unique Reference</td>
+                                            <td>{{ data.bankUniqueReference }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Customer Narration</td>
+                                            <td>{{ data.customerNarration }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Finacle Ref</td>
+                                            <td>{{ data.isoReference }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Teller</td>
+                                            <td>{{ data.teller }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Unique Deposit Reference</td>
+                                            <td>{{ data.uniqueDepositReference }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Debit Date</td>
+                                            <td>{{ data.debitDate }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Confirm By</td>
+                                            <td>{{ data.confirmBy }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Status</td>
+                                            <td>
+                                                <span *ngIf="data.status == 'Pending'" class="badge badge-warning">{{ data.status }}</span>
+                                                <span *ngIf="data.status != 'Pending'" class="badge badge-success">{{ data.status }}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td>ConfirmOn</td>
+                                                <td>{{ data.confirmOn }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td>Expected Date</td>
+                                                <td>{{ data.expectedDate }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td>Validate By</td>
+                                                <td>{{ data.validateBy }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td>ValidateOn</td>
+                                                <td>{{ data.validateOn }}</td>
+                                            </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- table-responsive -->
+                            </tr>
+                    </ng-container>
+                </tbody>
+            </nz-table>
+        </div>
+
+    </div>
+
+
+
+
+    <div class="steps-content" *ngIf="indextab == 'third-content'">
+
+        <ngx-ui-loader [loaderId]="'loader-02'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+        <div class="pd-10 pd-t-20 bg-gray-100">
+            <div class="row pd-b-10">
+                <div class="col-md-4">
+                    <div class="az-content-label pt-3">Tatal Approved Transaction: {{ totalCount }} / {{ totalConfirmtransaction }}</div>
+                </div>
+
+
+                <div class="float-right col-md-3 mt-1">
+                    <div class="wd-200 mg-b-20">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                </div>
+                            </div>
+                            <input type="date" name="DateFrom" [(ngModel)]="dateSearch.DateFrom" class="form-control fc-datepicker" placeholder="MM/DD/YYYY">
+                        </div>
+                    </div>
+                    <!-- wd-200 -->
+                </div>
+
+                <div class="float-right col-md-3 mt-1">
+                    <div class="wd-200 mg-b-20">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                                </div>
+                            </div>
+                            <input type="date" name="DateTo" [(ngModel)]="dateSearch.DateTo" class="form-control fc-datepicker" placeholder="MM/DD/YYYY">
+                        </div>
+                    </div>
+                    <!-- wd-200 -->
+                </div>
+
+                <div class="float-right col-md-2 mt-1">
+
+                    <button class="btn btn-az-primary btn-block" (click)="searchData2()">Search</button>
+                </div>
+                <!--
+      <div class="float-right col-md-8 mt-1">
+
+        <div class="az-header-center">
+
+          <input type="search" id="item_search" [(ngModel)]="search.student" class="form-control" placeholder="Search for Student...">
+          <button class="btn" style="margin-right: 30px;" (click)="onSearch()"><i class="typcn typcn-zoom"></i></button>
+          <button class="btn" (click)="onSearchCouncle()"><i class="typcn typcn-times"></i></button>
+
+        </div>
+      </div> -->
+            </div>
+
+            <nz-table #nzTable3 [nzData]="confirmtransactions" nzTableLayout="fixed" [nzLoading]="loading" [nzTotal]="totalConfirmtransaction">
+                <thead>
+                    <tr>
+                        <th nzWidth="60px">S/N</th>
+                        <th>Name </th>
+                        <th>Debit Account</th>
+                        <th>Credit Account</th>
+                        <th>Bank</th>
+                        <th>Status</th>
+                        <th nzRight>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="item">
+                    <ng-container *ngFor="let data of nzTable3.data">
+                        <tr>
+                            <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+                            <td nzLeft nzWidth="200px">{{ data.debitAccountName }}</td>
+                            <td>{{ data.debitAccountNumber }}</td>
+                            <td>{{ data.creditAccountNumber }}</td>
+                            <td>{{ data.bankName }}</td>
+                            <td>
+                                <span *ngIf="data.status == 'Pending'" class="badge badge-warning">{{ data.status }}</span>
+                                <span *ngIf="data.status != 'Pending'" class="badge badge-success">{{ data.status }}</span>
+                            </td>
+                            <td nzRight>
+                                <div class="btn-icon-list">
+                                    <button class="btn btn-info btn-icon" (click)="openUpdate(data.Id)"><i class="typcn typcn-eye"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [nzExpand]="expandSet.has(data.id)">
+                            <div class="az-content-label mg-b-5">More Details</div>
+
+                            <div class="table-responsive">
+                                <table class="table mg-b-0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Header</th>
+                                            <th>Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Depositor Name</td>
+                                            <td>{{ data.debitAccountName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Depositor Account</td>
+                                            <td>{{ data.debitAccountNumber }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Creditor Account Name</td>
+                                            <td>{{ data.creditAccountName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Credit Account Number</td>
+                                            <td>{{ data.creditAccountNumber }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Bank Name</td>
+                                            <td>{{ data.bankName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Branch Name</td>
+                                            <td>{{ data.branchName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Branch Name</td>
+                                            <td>{{ data.branchName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Actual Amount</td>
+                                            <td>{{ data.actualAmount }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Charges</td>
+                                            <td>{{ data.charges }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Bank Unique Reference</td>
+                                            <td>{{ data.bankUniqueReference }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Customer Narration</td>
+                                            <td>{{ data.customerNarration }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Finacle Ref</td>
+                                            <td>{{ data.isoReference }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Teller</td>
+                                            <td>{{ data.teller }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Unique Deposit Reference</td>
+                                            <td>{{ data.uniqueDepositReference }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Debit Date</td>
+                                            <td>{{ data.debitDate }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Confirm By</td>
+                                            <td>{{ data.confirmBy }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Status</td>
+                                            <td>
+                                                <span *ngIf="data.status == 'Pending'" class="badge badge-warning">{{ data.status }}</span>
+                                                <span *ngIf="data.status != 'Pending'" class="badge badge-success">{{ data.status }}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td>ConfirmOn</td>
+                                                <td>{{ data.confirmOn }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td>Expected Date</td>
+                                                <td>{{ data.expectedDate }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td>Validate By</td>
+                                                <td>{{ data.validateBy }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td>ValidateOn</td>
+                                                <td>{{ data.validateOn }}</td>
+                                            </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- table-responsive -->
+                            </tr>
+                    </ng-container>
+                </tbody>
+            </nz-table>
+        </div>
+
+    </div>
+
+</div>
+<!-- az-content-body -->

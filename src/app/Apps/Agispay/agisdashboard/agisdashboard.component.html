@@ -1,0 +1,47 @@
+  <div class="az-content-body">
+    <div class="az-content mb-4 d-block d-md-flex mt-4">
+      <div >
+        <h2 class="az-content-title mg-b-5 mg-b-lg-8">Hi, welcome back!</h2>
+        <p class="mg-b-0">Your transactions monitoring dashboard system.</p>
+      </div>
+    </div><!-- az-content-header -->
+    <div class="row row-sm">
+      <div class="col-sm-6 col-lg-4 col-xl-6 mg-t-20 mg-sm-t-0">
+        <div class="card card-body card-dashboard-fifteen">
+          <h1 class="mb-1">{{ allTransactionList.length }}</h1>
+          <label class="tx-purple">Transactions</label>
+          <span class="mb-4">The total number of <b>Transactions</b></span>
+        </div><!-- card -->
+      </div><!-- col -->
+      <div class="col-sm-6 col-lg-4 col-xl-6 mg-t-20 mg-sm-t-0">
+        <div class="card card-body card-dashboard-fifteen">
+          <h1 class="mb-1">{{ allApprovedTransactionList.length }}</h1>
+          <label class="tx-success">Approved Transactions</label>
+          <span class="mb-4">The total number of <b>Approved Transactions</b></span>
+        </div><!-- card -->
+      </div><!-- col -->
+    </div><!-- row -->
+    <div class="row row-sm mt-4">
+      <div class="col-sm-4 col-lg-4 col-xl-4 mg-sm-t-0">
+        <div class="card card-body card-dashboard-fifteen">
+          <h1 class="mb-1">{{ allPendingTransactionList.length }}</h1>
+          <label class="tx-primary">Pending Transactions</label>
+          <span class="mb-4">The total number of <b>Pending Transactions</b></span>
+        </div><!-- card -->
+      </div><!-- col -->
+      <div class="col-sm-4 col-lg-4 col-xl-4 mg-t-20 mg-sm-t-0">
+        <div class="card card-body card-dashboard-fifteen">
+          <h1 class="mb-1">{{ allFailedTransactionList.length }}</h1>
+          <label class="tx-danger">Failed Transactions</label>
+          <span class="mb-4">The total number of <b>Failed Transactions</b></span>
+        </div><!-- card -->
+      </div><!-- col -->
+      <div class="col-sm-4 col-lg-4 col-xl-4 mg-t-20 mg-sm-t-0">
+        <div class="card card-body card-dashboard-fifteen">
+          <h1 class="mb-1">{{ allRejectedTransactionList.length }}</h1>
+          <label class="tx-primary">Rejected Transactions</label>
+          <span class="mb-4">The total number of <b>rejected Transactions</b></span>
+        </div><!-- card -->
+      </div><!-- col -->
+    </div><!-- row -->
+  </div><!-- az-content-body -->

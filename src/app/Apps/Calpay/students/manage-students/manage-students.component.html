@@ -1,0 +1,494 @@
+<div class="az-content-header">
+  <div class="az-content-header-top">
+    <div>
+      <h2 class="az-content-title mg-b-5 mg-b-lg-8">Manage Students</h2>
+        <p class="mg-b-0">Students.</p>
+    </div>
+    <div class="az-dashboard-date">
+      <div class="date" [hidden]="!permissions.includes('CALPAY.ADD_STUDENT')">
+        <div class="float-right"  ><button class="btn btn-success btn-with-icon btn-block" (click)="open()"><i class="typcn typcn-plus"></i>Create New Student</button></div>
+      </div><!-- az-dashboard-date -->
+      <!-- <i class="icon ion-md-arrow-forward"></i> -->
+      <!-- <div class="date">
+        <button nz-button nzType="primary" [routerLink]= "['/manage-payments', {outlets: {payments: ['view-payments']}}]">Transactions</button>
+      </div> -->
+    </div><!-- az-dashboard-date -->
+  </div><!-- az-content-body-title -->
+
+
+  <nz-drawer
+  [nzBodyStyle]="{ overflow: 'auto' }"
+  [nzMaskClosable]="false"
+  [nzWidth]="720"
+  [nzVisible]="visible"
+  nzTitle="Create New Student"
+  [nzFooter]="footerTpl"
+  (nzOnClose)="close()"
+>
+<!-- <div class="az-content-label mg-b-5">Create Student</div>
+<p class="mg-b-20">Student.</p> -->
+<form #signupForm=ngForm (ngSubmit)="onSubmit()">
+  <ngx-ui-loader [loaderId]="'loader-01'" [fgsColor]= "'#02A51D'"></ngx-ui-loader>
+  <div *ngIf="index == 'First-content'">
+    <div class="pd-30 pd-sm-40 bg-gray-200">
+
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0"></label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+
+          <div class="alert alert-danger" [hidden]="!error">
+            {{error}}
+          </div>
+          <div class="alert alert-success" [hidden]="!success">
+            {{success}}
+          </div>
+        </div><!-- col -->
+      </div><!-- row -->
+
+    <div class="row row-xs align-items-center mg-b-20">
+      <div class="col-md-4">
+        <label class="form-label mg-b-0">Matric Number</label>
+      </div><!-- col -->
+      <div class="col-md-8 mg-t-5 mg-md-t-0">
+        <input type="text" class="form-control" placeholder="Enter Student Matric Number" name="MatricNumber" [(ngModel)]="form.MatricNumber" required>
+      </div><!-- col -->
+    </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Title</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <select class="form-control select2-no-search" name="Title" [(ngModel)]="form.Title" required>
+            <option label="Select title"></option>
+            <option value="MR.">MR.</option>
+            <option value="MS.">MS.</option>
+            <option value="MRS.">MRS.</option>
+            <option value="DR.">DR.</option>
+            <option value="BARR.">BARR.</option>
+            <option value="CHIEF.">CHIEF.</option>
+            <option value="PROF.">PROF.</option>
+            <option value="MESSR.">MESSR.</option>
+            <option value="SAN.">SAN.</option>
+            <option value="M/S.">M/S.</option>
+            <option value="M&M.">M&M.</option>
+            <option value="HON.">HON.</option>
+            <option value="SIR.">SIR.</option>
+            <option value="ARCH.">ARCH.</option>
+            <option value="MAST.">MAST.</option>
+            <option value="EVAN.">EVAN.</option>
+            <option value="REV.">REV.</option>
+            <option value="HRH.">HRH.</option>
+            <option value="OTUN.">OTUN.</option>
+            <option value="ELDER.">ELDER.</option>
+            <option value="MIG.">MIG.</option>
+            <option value="MISTR.">MISTR.</option>
+            <option value="MES.">MES.</option>
+            <option value="PAST.">PAST.</option>
+            <option value="ENGR.">ENGR.</option>
+            <option value="DEAC.">DEAC.</option>
+            <option value="JUST.">JUST.</option>
+            <option value="ALJ.">ALJ.</option>
+            <option value="MAZI.">MAZI.</option>
+            <option value="OBA.">OBA.</option>
+            <option value="EXC.">EXC.</option>
+            <option value="HIGH.">HIGH.</option>
+            <option value="Other.">Other.</option>
+          </select>
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Firstname</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <input type="text" class="form-control" placeholder="Enter Student firstname" name="FirstName" [(ngModel)]="form.FirstName" required>
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Last Name</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <input type="text" class="form-control" placeholder="Enter Student lastname" name="LastName" [(ngModel)]="form.LastName" required>
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Other Name</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <input type="text" class="form-control" placeholder="Enter Student Other Name" name="OtherName" [(ngModel)]="form.OtherName" required>
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Description</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <textarea rows="3" class="form-control" placeholder="Student Description" name="Description" [(ngModel)]="form.Description"></textarea>
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Email</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <input type="email" class="form-control" placeholder="Enter Student email" name="Email" [(ngModel)]="form.Email" required>
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Address</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <textarea rows="3" class="form-control" placeholder="Student Address" name="Address" [(ngModel)]="form.Address" required></textarea>
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Phone Number</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <input type="tel" maxlength="11" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Student Phone Number" name="PhoneNo" [(ngModel)]="form.PhoneNo" required>
+        </div><!-- col -->
+      </div><!-- row -->
+    <!--
+      <button class="btn btn-az-primary pd-x-30 mg-r-5">Register</button>
+      <button class="btn btn-dark pd-x-30">Cancel</button> -->
+    </div>
+  </div>
+  <div class="steps-content" *ngIf="index == 'Second-content'">
+    <div class="pd-30 pd-sm-40 bg-gray-100">
+
+      <div class="alert alert-solid-warning" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <strong>A Step Ahead!</strong> Preview your input, then click submit to complete your registration.
+      </div><!-- alert -->
+
+    <div class="row row-xs align-items-center mg-b-20">
+      <div class="col-md-4">
+        <label class="form-label mg-b-0">Matric Number</label>
+      </div><!-- col -->
+      <div class="col-md-8 mg-t-5 mg-md-t-0">
+        <input type="text" class="form-control" placeholder="Enter Student Matric Number" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="form.MatricNumber">
+      </div><!-- col -->
+    </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Title</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <input type="text" class="form-control" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="form.Title">
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Firstname</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <input type="text" class="form-control" [ngModelOptions]="{standalone: true}" placeholder="Enter Student firstname" readonly [(ngModel)]="form.FirstName">
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Last Name</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <input type="text" class="form-control" placeholder="Enter Student lastname" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="form.LastName">
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Other Name</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <input type="text" class="form-control" placeholder="Enter Student Other Name" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="form.OtherName">
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Description</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <textarea rows="3" class="form-control" placeholder="Student Description" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="form.Description"></textarea>
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Email</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <input type="email" class="form-control" placeholder="Enter Student email" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="form.Email">
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Address</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <textarea rows="3" class="form-control" placeholder="Student Address" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="form.Address"></textarea>
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Phone Number</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <input type="number" class="form-control" min="1" max="11" placeholder="Enter Student Phone Number" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="form.PhoneNo">
+        </div><!-- col -->
+      </div><!-- row -->
+    <!--
+      <button class="btn btn-az-primary pd-x-30 mg-r-5">Register</button>
+      <button class="btn btn-dark pd-x-30">Cancel</button> -->
+    </div>
+
+  </div>
+  <ng-template #footerTpl>
+    <div style="float: right">
+      <button class="btn btn-dark pd-x-30 mg-r-5" (click)="close()">Cancel</button>
+      <button class="btn btn-warning pd-x-30 mg-r-5" *ngIf="current == 1" (click)="back()">Edit</button>
+      <button class="btn btn-az-primary pd-x-30 mg-r-5" *ngIf="current == 0" (click)="next()">Proceed</button>
+      <button class="btn btn-success pd-x-30 mg-r-5" *ngIf="current == 1 && !disabled && actionBotton == 'create'" (click)="onSubmit()" [disabled] = "!signupForm.valid">Submit Now</button>
+      <button class="btn btn-success pd-x-30 mg-r-5" *ngIf="current == 1 && !disabled && actionBotton == 'update'" (click)="onUpdate()" [disabled] = "!signupForm.valid">Update Now</button>
+      <button class="btn btn-success pd-x-30 mg-r-5"  *ngIf="current == 1 && disabled" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Loading...
+      </button>
+
+    </div>
+  </ng-template>
+</form>
+
+  <div class="steps-content" *ngIf="index == 'third-content'">
+    <div class="pd-30 pd-sm-40 bg-gray-100">
+      <nz-result
+      *ngIf="Status == 200"
+      nzStatus="success"
+      nzTitle="Successfully Created New Student!"
+      nzSubTitle="New Student: {{ newresponse }}"
+    >
+      <div nz-result-extra>
+        <!-- <button nz-button nzType="primary">Go Payment</button> -->
+        <button nz-button (click)="again()">Create Another</button>
+      </div>
+    </nz-result>
+
+
+    <nz-result
+    *ngIf="Status == 400"
+    nzTitle="Submission Failed"
+    nzStatus="error"
+    nzSubTitle="Please check and modify the following information before resubmitting."
+  >
+    <div nz-result-content>
+      <div class="desc">
+        <h4 nz-title>The content you submitted has the following error:</h4>
+        <ng-container *ngFor="let list of newresponse">
+          <p nz-paragraph style="color: crimson;">
+            <i nz-icon nzType="close-circle"></i>
+            {{ list.error }}: <a>{{ list.field }} &gt;</a>
+          </p>
+        </ng-container>
+
+      </div>
+    </div>
+    <div nz-result-extra>
+      <button nz-button nzType="primary" (click)="back()">Go Back</button>
+        <button nz-button (click)="again()">Create Another</button>
+    </div>
+  </nz-result>
+
+
+    </div>
+  </div>
+</nz-drawer>
+
+  <div class="nav-wrapper">
+    <nav class="nav az-nav-line">
+      <!-- <a href="javascript::void(0)" [routerLink]= "['/manage-payments',{outlets: {Payments: ['view']}}]" routerLinkActive="active" class="nav-link">Pending Payments</a> &nbsp;
+      <a href="javascript::void(0)" [routerLink]= "['/manage-payments',{outlets: {Payments: ['pending']}}]" routerLinkActive="active" class="nav-link">Pending Payments</a> &nbsp;
+      <a href="javascript::void(0)" [routerLink]= "['/manage-payments',{outlets: {Payments: ['rejected']}}]" routerLinkActive="active" class="nav-link">Regected Payments</a> -->
+    </nav>
+
+    <!-- <nav class="nav az-nav-line" *ngIf="account == 'existing'">
+      <a href="javascript::void(0)" [routerLink]= "['/savings',{outlets: {Savings: ['new-bvn']}}]" routerLinkActive="active" class="nav-link">Account Opening (BVN)</a>
+      <a href="javascript::void(0)" routerLinkActive="active" class="nav-link">Account Opening (Without BVN)</a>
+      <a href="javascript::void(0)" routerLinkActive="active" class="nav-link">Account Opening (Minor)</a>
+      <a href="javascript::void(0)" routerLinkActive="active" class="nav-link">Account Opening (Bulk)</a>
+    </nav> -->
+  </div>
+</div>
+
+
+<div class="az-content-body">
+  <div class="pd-10 pd-t-20 bg-gray-100">
+    <!-- <div class="az-content-label mg-b-5">All Students</div> -->
+  <div class="row pd-b-10">
+    <div class="col-md-4">
+      <div class="az-content-label pt-3">Total Students: {{ totalCount }} / {{ tableCount }}</div>
+    </div>
+
+    <div class="float-right col-md-8 mt-1">
+
+      <div class="az-header-center">
+
+        <input type="search" id="item_search" [(ngModel)]="search.student" class="form-control" placeholder="Search for Student...">
+        <button class="btn" style="margin-right: 30px;" (click)="onSearch()"><i class="typcn typcn-zoom"></i></button>
+        <button class="btn" (click)="onSearchCouncle()"><i class="typcn typcn-times"></i></button>
+
+      </div><!-- az-header-center -->
+    </div>
+  </div>
+
+    <nz-table nzShowSizeChanger
+    #fixedTable [nzData]="listOfData"
+    [nzScroll]="{ x: '700px', y: '1024px' }"
+    [nzFrontPagination]="false"
+    [nzLoading]="loading"
+    [nzTotal]="total"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageIndex"
+    (nzQueryParams)="onQueryParamsChange($event)"
+
+    >
+      <ngx-ui-loader [loaderId]="'loader-02'" [fgsColor]= "'#02A51D'"></ngx-ui-loader>
+      <thead>
+        <tr>
+          <th  nzWidth="60px">S/N</th>
+          <th nzLeft>Matric Number</th>
+          <th nzColumnKey="name" [nzSortFn]="true">Full Name</th>
+          <th nzColumnKey="email" [nzSortFn]="true">Email</th>
+          <th>Address</th>
+          <th>Phone</th>
+          <th nzRight>Action</th>
+        </tr>
+      </thead>
+      <tbody id="item">
+        <tr *ngFor="let data of fixedTable.data; let r= index">
+          <td  nzWidth="60px">{{ data.Id }}</td>
+          <td nzLeft>{{ data.MatricNumber }}</td>
+          <td>{{ data.FirstName }} {{ data.LastName }}</td>
+          <td>{{ data.Email }}</td>
+          <td>{{ data.Address }}</td>
+          <td>{{ data.PhoneNo }}</td>
+          <td nzRight>
+
+            <div class="btn-icon-list">
+              <button class="btn btn-success btn-icon" [hidden]="!permissions.includes('CALPAY.UPDATE_STUDENT')" (click)="openUpdate(data.Id)"><i class="typcn typcn-eye"></i></button>
+              <button class="btn btn-danger btn-icon" [hidden]="!permissions.includes('CALPAY.DELETE_STUDENT')" (click)="warning(data.Id)"><i class="typcn typcn-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+
+    <nz-drawer
+    [nzBodyStyle]="{ overflow: 'auto' }"
+    [nzMaskClosable]="false"
+    [nzWidth]="720"
+    [nzVisible]="visible2"
+    nzTitle="Delete Student"
+    [nzFooter]="footerTpl2"
+    (nzOnClose)="close2()"
+  >
+  <!-- <div class="az-content-label mg-b-5">Create Student</div>
+  <p class="mg-b-20">Student.</p> -->
+
+  <form #deleteForm=ngForm (ngSubmit)="onSubmit()">
+    <div class="steps-content" *ngIf="index2 == 'First-content'">
+    <ngx-ui-loader [loaderId]="'loader-01'" [fgsColor]= "'#02A51D'"></ngx-ui-loader>
+    <div *ngIf="index == 'First-content'">
+      <div class="pd-30 pd-sm-40 bg-gray-200">
+
+
+        <div class="alert alert-solid-danger" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <strong>You are about to delete a student!</strong> <br> Give reason for deleting this student.
+        </div><!-- alert -->
+
+        <div class="row row-xs align-items-center mg-b-20">
+          <div class="col-md-4">
+            <label class="form-label mg-b-0">Matric Number</label>
+          </div><!-- col -->
+          <div class="col-md-8 mg-t-5 mg-md-t-0">
+            <input type="text" class="form-control" value="{{ form.MatricNumber }}" readonly>
+          </div><!-- col -->
+        </div><!-- row -->
+
+        <div class="row row-xs align-items-center mg-b-20">
+          <div class="col-md-4">
+            <label class="form-label mg-b-0">Student Name</label>
+          </div><!-- col -->
+          <div class="col-md-8 mg-t-5 mg-md-t-0">
+            <input type="text" class="form-control" value="{{ form.FirstName }} {{ form.LastName }}" readonly>
+          </div><!-- col -->
+        </div><!-- row -->
+
+        <div class="row row-xs align-items-center mg-b-20">
+          <div class="col-md-4">
+            <label class="form-label mg-b-0">Reason</label>
+          </div><!-- col -->
+          <div class="col-md-8 mg-t-5 mg-md-t-0">
+            <textarea rows="3" class="form-control" placeholder="Student Description" name="DeleteKey" [(ngModel)]="deleteStudent.DeleteKey" required></textarea>
+          </div><!-- col -->
+        </div><!-- row -->
+      </div>
+    </div>
+  </div>
+  </form>
+
+  <div class="steps-content" *ngIf="index2 == 'Second-content'">
+    <div class="pd-30 pd-sm-40 bg-gray-100">
+      <nz-result
+      *ngIf="Status == 200"
+      nzStatus="success"
+      nzTitle="Operation Successful!"
+      nzSubTitle="{{ newresponse }}"
+    >
+      <div nz-result-extra>
+        <!-- <button nz-button nzType="primary">Go Payment</button> -->
+        <button nz-button (click)="close2()">Close</button>
+      </div>
+    </nz-result>
+  </div>
+</div>
+
+<ng-template #footerTpl2>
+  <div style="float: right">
+    <button class="btn btn-dark pd-x-30 mg-r-5" (click)="close2()">Cancel</button>
+    <button class="btn btn-danger pd-x-30 mg-r-5" *ngIf="current == 0 && !disabled && actionBotton == 'delete' && index2 != 'Second-content'" (click)="ondelete()" [disabled] = "!deleteForm.valid">Delete Now</button>
+    <button class="btn btn-danger pd-x-30 mg-r-5"  *ngIf="current == 0 && disabled && actionBotton == 'delete'" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      Loading...
+    </button>
+
+  </div>
+</ng-template>
+
+  </nz-drawer>
+
+
+  </div>
+</div><!-- az-content-body -->

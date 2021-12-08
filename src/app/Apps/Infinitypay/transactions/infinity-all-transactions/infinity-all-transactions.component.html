@@ -1,0 +1,45 @@
+<div class="az-content-header">
+  <div class="az-content-header-top">
+    <div>
+      <h2 class="az-content-title mg-b-5 mg-b-lg-8">Manage Transactions</h2>
+        <p class="mg-b-0">Transactons.</p>
+    </div>
+    <div class="az-dashboard-date">
+      <div class="date">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="az-content-body">
+
+   <div>
+        <table id="example2" class="table">
+          <thead>
+            <tr>
+              <th>S/N</th>
+              <th>Name </th>
+              <th>Debit Account</th>
+              <th>Credit Account</th>
+              <th>Bank</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of Pendingtransactions">
+              <td></td>
+              <td>{{ data.debitAccountName }}</td>
+              <td>{{ data.debitAccountNumber }}</td>
+              <td>{{ data.creditAccountNumber }}</td>
+              <td>{{ data.bankName }}</td>
+              <td>
+                <span *ngIf="data.status == 'Pending'" class="badge badge-warning">{{ data.status }}</span>
+                <span *ngIf="data.status != 'Pending'" class="badge badge-success">{{ data.status }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+</div><!-- az-content-body -->

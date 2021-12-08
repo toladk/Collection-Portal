@@ -1,0 +1,286 @@
+<div class="pd-10 pd-t-20 bg-gray-100" *ngIf="view == 'list'">
+    <!-- <div class="az-content-label mg-b-5">All Students</div> -->
+    <div class="row pd-b-10">
+        <div class="col-md-4">
+            <div class="az-content-label pt-3">Total Approved Payments: {{ totalCount }} / {{ tableCount }}</div>
+        </div>
+
+        <div class="float-right col-md-8 mt-1">
+
+            <div class="az-header-center">
+
+                <input type="search" id="item_search" [(ngModel)]="search.student" class="form-control" placeholder="Search for Student...">
+                <button class="btn" style="margin-right: 30px;" (click)="onSearch()"><i class="typcn typcn-zoom"></i></button>
+                <button class="btn" (click)="onSearchCouncle()"><i class="typcn typcn-times"></i></button>
+
+            </div>
+            <!-- az-header-center -->
+        </div>
+    </div>
+
+    <nz-table nzShowSizeChanger #fixedTable [nzData]="listOfData" [nzScroll]="{ x: '700px', y: '1024px' }" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="total" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex" (nzQueryParams)="onQueryParamsChange($event)">
+        <ngx-ui-loader [loaderId]="'loader-03'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+        <thead>
+            <tr>
+                <th nzWidth="60px">Id</th>
+                <th nzLeft>Matric Number</th>
+                <th nzColumnKey="name" [nzSortFn]="true">Full Name</th>
+                <th>School Fee</th>
+                <th nzColumnKey="email" [nzSortFn]="true">Amount Paid</th>
+                <th>Payment Type</th>
+                <th>Depositor Name</th>
+                <th>Payment Date</th>
+                <th nzRight>Action</th>
+            </tr>
+        </thead>
+        <tbody id="item">
+            <tr *ngFor="let data of fixedTable.data; let r= index">
+                <td nzWidth="60px">{{ data.RequestId }}</td>
+                <td nzLeft>{{ data.Student_MatricNumber }}</td>
+                <td>{{ data.Student_FirstName }} {{ data.Student_LastName }} {{ data.Student_OtherName }}</td>
+                <td>{{ data.Request_SchoolFee | currency:'NGN':'symbol-narrow'}}</td>
+                <td>{{ data.AmountPaid | currency:'NGN':'symbol-narrow'}}</td>
+                <td>{{ data.PaymentType }}</td>
+                <td>{{ data.DepositorName }}</td>
+                <td>{{ data.DateCreated }}</td>
+                <td nzRight>
+
+                    <button class="btn btn-success btn-icon" type="button" (click)="invoice(data.Id)"><i class="typcn typcn-printer"></i></button>
+
+                </td>
+            </tr>
+
+        </tbody>
+    </nz-table>
+</div>
+
+<div class="pd-10 pd-t-20 bg-gray-100" *ngIf="view == 'invoice'">
+    <!-- <div class="az-content-label mg-b-5">All Students</div> -->
+    <div class="row pd-b-10">
+        <div class="col-md-4">
+            <div class="az-content-label pt-3">Invoice: {{ totalCount }}</div>
+        </div>
+
+        <div class="float-right col-md-8 mt-1">
+
+            <div class="az-header-center">
+
+                <div class="float-right"><button class="btn btn-success btn-with-icon" (click)="close()"><i class="typcn typcn-plus"></i>Approved List</button></div>
+
+
+            </div>
+            <!-- az-header-center -->
+        </div>
+    </div>
+
+
+
+
+
+    <div class="row pd-b-10">
+        <div class="col-md-12">
+            <ngx-ui-loader [loaderId]="'loader-03'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+            <div class="page-content">
+                <div class="page-header text-blue-d2">
+                    <h1 class="page-title text-secondary-d1">
+                        Invoice
+                        <small class="page-info">
+                  <i class="fa fa-angle-double-right text-80"></i>
+                  ID: #HB-{{ getPaymentDetail.SlipNo }}
+              </small>
+                    </h1>
+
+                    <div class="page-tools">
+                        <div class="action-buttons">
+                            <!-- <a class="btn bg-white btn-light mx-1px text-95" href="javascript::void(0)" (click)="printComponent()" data-title="Print">
+                      <i class="mr-1 fa fa-print text-primary-m1 text-120 w-2"></i>
+                      Print
+                  </a> -->
+                            <!-- (click)="exportAsCSV()" -->
+
+                            <a class="btn btn-success mx-1px text-95" href="javascript::void(0)" (click)="openPDF()" data-title="PDF">
+                                <i class="typcn typcn-download"></i> Export
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-0">
+                    <div class="row mt-4">
+                        <div class="col-12 col-lg-10 offset-lg-1" id="myTableElementId">
+                            <ngx-ui-loader [loaderId]="'loader-04'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="text-center text-150">
+                                        <img src="assets/img/icons/new-logo.png"> &nbsp;
+                                        <span class="text-default-d3 text-success">Heritage Bank PLC</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- .row -->
+
+                            <hr class="row brc-default-l1 mx-n1 mb-4" />
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div>
+                                        <span class="text-sm text-grey-m2 align-middle">To:</span>
+                                        <span class="text-600 text-110 text-blue align-middle"> {{ getPaymentDetail.Student_FirstName }} {{ getPaymentDetail.Student_LastName }} {{ getPaymentDetail.Student_OtherName }}</span>
+                                    </div>
+                                    <div class="text-grey-m2">
+                                        <div class="my-1">
+                                            {{ getPaymentDetail.Student_MatricNumber }}
+                                        </div>
+                                        <div class="my-1">
+                                            {{ getPaymentDetail.Student_Address }}
+                                        </div>
+                                        <div class="my-1"><i class="typcn typcn-phone fa-flip-horizontal text-secondary"></i> <b class="text-600">{{ getPaymentDetail.Student_PhoneNo }}</b></div>
+                                    </div>
+
+                                    <div>
+                                        <span class="text-sm text-grey-m2 align-middle">Depositor:</span>
+                                        <span class="text-600 text-110 text-blue align-middle"> {{ getPaymentDetail.DepositorName }}</span>
+                                    </div>
+                                    <div class="text-grey-m2">
+                                        <div class="my-1">
+                                            {{ getPaymentDetail.DepositorAddress }}
+                                        </div>
+                                        <div class="my-1"><i class="typcn typcn-phone fa-flip-horizontal text-secondary"></i> <b class="text-600">{{ getPaymentDetail.DepositorPhoneNo }}</b></div>
+                                    </div>
+                                </div>
+                                <!-- /.col -->
+
+                                <div class="text-95 col-sm-6 align-self-start d-sm-flex justify-content-end">
+                                    <hr class="d-sm-none" />
+                                    <div class="text-grey-m2">
+                                        <div class="mt-1 mb-2 text-secondary-m1 text-600 text-125">
+                                            Invoice
+                                        </div>
+
+                                        <div class="my-2"><i class="typcn typcn-media-record text-blue-m2 text-xs mr-1"></i>
+                                            <span class="text-600 text-90">E Pin:</span>{{ getPaymentDetail.EPin }}</div>
+
+                                        <div class="my-2"><i class="typcn typcn-media-record text-blue-m2 text-xs mr-1"></i>
+                                            <span class="text-600 text-90">Slip No:</span> HB-{{ getPaymentDetail.SlipNo }}</div>
+
+                                        <div class="my-2"><i class="typcn typcn-media-record text-blue-m2 text-xs mr-1"></i>
+                                            <span class="text-600 text-90">Payment Date:</span> {{ getPaymentDetail.DateCreated | date }}</div>
+
+                                        <!-- <div class="my-2"><i class="typcn typcn-media-record text-blue-m2 text-xs mr-1"></i>
+                                 <span class="text-600 text-90">Issue Date:</span> Oct 12, 2019</div> -->
+
+                                        <div class="my-2"><i class="typcn typcn-media-record text-blue-m2 text-xs mr-1"></i>
+                                            <span class="text-600 text-90 ml-2">Status:</span>
+                                            <span *ngIf="getPaymentDetail.Status == 'Approved'" class="badge badge-success badge-pill px-25">{{ getPaymentDetail.Status }}</span>
+                                            <span *ngIf="getPaymentDetail.Status != 'Approved'" class="badge badge-warning badge-pill px-25">{{ getPaymentDetail.Status }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.col -->
+                            </div>
+
+                            <div class="mt-4">
+                                <div class="row text-600 text-white bgc-default-tp1 py-25">
+                                    <div class="d-none d-sm-block col-1">#</div>
+                                    <div class="col-9 col-sm-5">Description</div>
+                                    <div class="d-none d-sm-block col-4 col-sm-2"></div>
+                                    <div class="d-none d-sm-block col-sm-2">School Fee</div>
+                                    <div class="col-2">Amount Paid</div>
+                                </div>
+
+                                <div class="text-95 text-secondary-d3">
+
+                                    <div class="row mb-2 mb-sm-0 py-25">
+                                        <div class="d-none d-sm-block col-1">Description:</div>
+                                        <div class="col-9 col-sm-5"> {{ getPaymentDetail.Description }}</div>
+                                        <div class="d-none d-sm-block col-2"></div>
+                                        <div class="d-none d-sm-block col-2 text-95">{{ getPaymentDetail.Request_SchoolFee | currency:'NGN':'symbol-narrow' }}</div>
+                                        <div class="col-2 text-secondary-d2">{{ getPaymentDetail.AmountPaid | currency:'NGN':'symbol-narrow' }}</div>
+                                    </div>
+
+                                    <div class="row mb-2 mb-sm-0 py-25">
+                                        <div class="d-none d-sm-block col-1">Program:</div>
+                                        <div class="col-9 col-sm-5"> {{ getPaymentDetail.Request_ProgramName }}</div>
+                                        <div class="d-none d-sm-block col-2"></div>
+                                        <div class="d-none d-sm-block col-2 text-95"></div>
+                                        <div class="col-2 text-secondary-d2"></div>
+                                    </div>
+
+                                    <div class="row mb-2 mb-sm-0 py-25">
+                                        <div class="d-none d-sm-block col-1">Session: </div>
+                                        <div class="col-9 col-sm-5"> {{ getPaymentDetail.Request_SessionName }}</div>
+                                        <div class="d-none d-sm-block col-2"></div>
+                                        <div class="d-none d-sm-block col-2 text-95"></div>
+                                        <div class="col-2 text-secondary-d2"></div>
+                                    </div>
+
+                                    <div class="row mb-2 mb-sm-0 py-25 bgc-default-l4">
+                                        <div class="d-none d-sm-block col-1">School Name: </div>
+                                        <div class="col-9 col-sm-5"> University of Calabar</div>
+                                        <div class="d-none d-sm-block col-2"></div>
+                                        <div class="d-none d-sm-block col-2 text-95"></div>
+                                        <div class="col-2 text-secondary-d2"></div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row border-b-2 brc-default-l2"></div>
+
+                                <div class="row mt-3">
+                                    <div class="col-12 col-sm-7 text-grey-d2 text-95 mt-2 mt-lg-0">
+                                        Extra note such as company or payment information...
+                                    </div>
+
+                                    <div class="col-12 col-sm-5 text-grey text-90 order-first order-sm-last">
+                                        <div class="row my-2">
+                                            <div class="col-7 text-right">
+                                                Total Amount Paid
+                                            </div>
+                                            <div class="col-5">
+                                                <span class="text-120 text-secondary-d1">{{ getPaymentDetail.AmountPaid | currency:'NGN':'symbol-narrow' }}</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- <div class="row my-2">
+                                  <div class="col-7 text-right">
+                                    Bank Charges
+                                  </div>
+                                  <div class="col-5">
+                                      <span class="text-110 text-secondary-d1">{{ getPaymentDetail.BankCharges | currency:'NGN':'symbol-narrow' }}</span>
+                                  </div>
+                              </div> -->
+
+                                        <!-- <div class="row my-2">
+                                <div class="col-7 text-right">
+                                  Total Charges
+                                </div>
+                                <div class="col-5">
+                                    <span class="text-110 text-secondary-d1">{{ getPaymentDetail.TotalCharges | currency:'NGN':'symbol-narrow' }}</span>
+                                </div>
+                            </div> -->
+
+                                        <!-- <div class="row my-2 align-items-center bgc-primary-l3 p-2">
+                                  <div class="col-7 text-right">
+                                      Total Amount
+                                  </div>
+                                  <div class="col-5">
+                                      <span class="text-150 text-success-d3 opacity-2">{{ getPaymentDetail.Request_TotalPayments | currency:'NGN':'symbol-narrow' }}</span>
+                                  </div>
+                              </div> -->
+                                    </div>
+                                </div>
+
+                                <hr />
+
+                                <div>
+                                    <span class="text-secondary-d1 text-105">Thank you for your business</span>
+                                    <a href="javascript::void(0)" (click)="close()" class="btn btn-secondary btn-bold px-4 float-right mt-3 mt-lg-0">Go Back</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

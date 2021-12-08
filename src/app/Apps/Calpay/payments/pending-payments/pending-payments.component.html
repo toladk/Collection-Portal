@@ -1,0 +1,1138 @@
+<div class="pd-10 pd-t-20 bg-gray-100">
+    <!-- <div class="az-content-label mg-b-5">All Students</div> -->
+    <div class="row pd-b-10">
+        <div class="col-md-4">
+            <div class="az-content-label pt-3">Total Pending Payments: {{ totalCount }} / {{ tableCount }}</div>
+        </div>
+
+        <div class="float-right col-md-8 mt-1">
+
+            <div class="az-header-center">
+
+                <input type="search" id="item_search" [(ngModel)]="search.student" class="form-control" placeholder="Search for Student...">
+                <button class="btn" style="margin-right: 30px;" (click)="onSearch()"><i class="typcn typcn-zoom"></i></button>
+                <button class="btn" (click)="onSearchCouncle()"><i class="typcn typcn-times"></i></button>
+
+            </div>
+            <!-- az-header-center -->
+        </div>
+    </div>
+
+    <nz-table nzShowSizeChanger #fixedTable [nzData]="listOfData" [nzScroll]="{ x: '700px', y: '1024px' }" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="total" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex" (nzQueryParams)="onQueryParamsChange($event)">
+        <ngx-ui-loader [loaderId]="'loader-02'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+        <thead>
+            <tr>
+                <th nzWidth="60px">Id</th>
+                <th nzLeft>Matric Number</th>
+                <th nzColumnKey="name" [nzSortFn]="true">Full Name</th>
+                <th>School Fee</th>
+                <th nzColumnKey="email" [nzSortFn]="true">Amount Paid</th>
+                <th>Payment Type</th>
+                <th>Depositor Name</th>
+                <th>Payment Date</th>
+                <th nzRight>Action</th>
+            </tr>
+        </thead>
+        <tbody id="item">
+            <tr *ngFor="let data of fixedTable.data; let r= index">
+                <td nzWidth="60px">{{ data.RequestId }}</td>
+                <td nzLeft>{{ data.Student_MatricNumber }}</td>
+                <td>{{ data.Student_FirstName }} {{ data.Student_LastName }} {{ data.Student_OtherName }}</td>
+                <td>{{ data.Request_SchoolFee | currency:'NGN':'symbol-narrow'}}</td>
+                <td>{{ data.AmountPaid | currency:'NGN':'symbol-narrow'}}</td>
+                <td>{{ data.PaymentType }}</td>
+                <td>{{ data.DepositorName }}</td>
+                <td>{{ data.DateCreated }}</td>
+                <td nzRight>
+                    <div class="btn-icon-list dropdown dropleft mg-b-10">
+                        <button class="btn btn-success btn-icon" type="button" id="dropleftMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="typcn typcn-th-menu"></i></button>
+
+                        <div class="dropdown-menu tx-13" aria-labelledby="dropleftMenuButton">
+                            <a class="dropdown-item" *ngIf="permissions.includes('CALPAY.VIEW_REQUEST')" (click)="viewOpen(data.Id)"><i class="typcn typcn-contacts text text-info"></i> View Details</a>
+                            <a class="dropdown-item" *ngIf="permissions.includes('CALPAY.UPDATE_REQUEST')" (click)="openUpdate(data.Request_StudentId, data.Id)"><i class="typcn typcn-edit text text-warning"></i> Update</a>
+                            <a class="dropdown-item" *ngIf="permissions.includes('CALPAY.APPROVE_REQUEST')" (click)="warning(data.Request_StudentId, data.Id, 'approve')"><i class="typcn typcn-input-checked text text-success"></i> Approve</a>
+                            <a class="dropdown-item" *ngIf="permissions.includes('CALPAY.ADD_REQUEST')" (click)="warning(data.Request_StudentId, data.Id, 'delete')"><i class="typcn typcn-trash text text-danger"></i> Delete</a>
+                        </div>
+                        <!-- <button class="btn btn-warning btn-icon" (click)="openUpdate(data.Id, 'Partial')" data-toggle="tooltip" data-placement="top" title="Partial Payment"><i class="typcn typcn-export"></i></button> -->
+                    </div>
+                </td>
+        </tbody>
+    </nz-table>
+
+    <nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzWidth]="720" [nzVisible]="visible" nzTitle="Update Payment Request" [nzFooter]="footerTpl" (nzOnClose)="close()">
+
+        <form #deleteForm=ngForm (ngSubmit)="onSubmit()">
+            <div class="steps-content" *ngIf="index == 'First-content'">
+                <ngx-ui-loader [loaderId]="'loader-01'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+
+                <div class="az-content-label mg-b-5">Payment Details</div>
+                <!-- <p class="mg-b-20">Student.</p> -->
+
+                <div class="pd-30 pd-sm-40 bg-gray-200">
+
+
+                    <div class="alert alert-solid-info" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+                        <strong>Please, complete this payment with required student details</strong>
+
+                        <nz-collapse nzAccordion>
+                            <nz-collapse-panel *ngFor="let panel of panels" [nzHeader]="panel.name" [nzActive]="panel.active">
+
+                                <div class="row row-xs align-items-center mg-b-20">
+                                    <div class="col-md-4">
+                                        <label class="form-label mg-b-0">Student Matric Number</label>
+                                    </div>
+                                    <!-- col -->
+                                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                        <input type="text" class="form-control" value="{{ form.MatricNumber }}" readonly>
+                                    </div>
+                                    <!-- col -->
+                                </div>
+                                <!-- row -->
+
+                                <div class="row row-xs align-items-center mg-b-20">
+                                    <div class="col-md-4">
+                                        <label class="form-label mg-b-0">Student Name</label>
+                                    </div>
+                                    <!-- col -->
+                                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                        <input type="text" class="form-control" value="{{ form.FirstName }} {{ form.LastName }}" readonly>
+                                    </div>
+                                    <!-- col -->
+                                </div>
+                                <!-- row -->
+
+                                <div class="row row-xs align-items-center mg-b-20">
+                                    <div class="col-md-4">
+                                        <label class="form-label mg-b-0">Student Phone Number</label>
+                                    </div>
+                                    <!-- col -->
+                                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                        <input type="text" class="form-control" placeholder="Enter Student Phone Number" name="PhoneNo" [(ngModel)]="form.PhoneNo" readonly>
+                                    </div>
+                                    <!-- col -->
+                                </div>
+                                <!-- row -->
+                            </nz-collapse-panel>
+                        </nz-collapse>
+                    </div>
+                    <!-- alert -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Select Session</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <select class="form-control select2-no-search" (change)="onselectSession($event)" name="SessionId" [(ngModel)]="Paymentform.SessionId">
+                <option label="Select Session"></option>
+                <option *ngFor="let session of sessions" value="{{ session.ID }}">{{ session.Name }}.</option>
+              </select>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Select Program</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <select class="form-control select2-no-search" (change)="onselectProgram($event)" name="ProgramId" [(ngModel)]="Paymentform.ProgramId">
+                  <option label="Select Program"></option>
+                  <option *ngFor="let program of programs" value="{{ program.ID }}">{{ program.ProgramName }}.</option>
+                </select>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">School Fee</label>
+                        </div>
+                        <!-- col -->
+
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <div class="alert alert-outline-success" role="alert">
+                                <strong>{{ programProgramName }}</strong>.
+                            </div>
+                            <!-- alert -->
+                        </div>
+                        <!-- col -->
+
+                        <div class="col-md-4">
+                        </div>
+                        <!-- col -->
+
+                        <div class="col-md-4 mg-t-5 mg-md-t-0">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">N</span>
+                                </div>
+                                <input type="text" class="form-control text text-danger" aria-label="Amount (to the nearest dollar)" value="{{ programAmount }}" name="SchoolFee" [(ngModel)]="Paymentform.SchoolFee" readonly>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">.00</span>
+                                </div>
+                            </div>
+                            <!-- input-group -->
+                            <!-- <input type="text" class="form-control text text-success" placeholder="Enter Student firstname" value="{{ programAmount }}" name="SchoolFee" [(ngModel)]="Paymentform.SchoolFee" required> -->
+                        </div>
+                        <!-- col -->
+
+                        <div class="col-md-4 mg-t-5 mg-md-t-0">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" value="{{ programSessionName }}" placeholder="Payment Session" aria-label="Payment session" aria-describedby="basic-addon2" readonly>
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="basic-addon2">Session</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- col -->
+
+
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Amount Paid</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">N</span>
+                                </div>
+                                <input value="{{ programAmount }}" type="text" class="form-control" aria-label="Amount (to the nearest Naira)" name="AmountPaid" [(ngModel)]="Paymentform.PaymentItem.AmountPaid">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">.00</span>
+                                </div>
+                            </div>
+                            <!-- input-group -->
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Slip Number</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="email" class="form-control" placeholder="Enter slip Number" name="SlipNo" [(ngModel)]="Paymentform.PaymentItem.SlipNo">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Payment Type</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <select class="form-control select2-no-search" name="PaymentType" [(ngModel)]="Paymentform.PaymentItem.PaymentType">
+                  <option label="Select Payment Method"></option>
+                  <option value="Full">Full Payment.</option>
+                  <option value="Partial">Partial Payment.</option>
+                  <option value="Balance">Balance Payment.</option>
+                </select>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Payment Method</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <select class="form-control select2-no-search" name="PaymentMethod" [(ngModel)]="Paymentform.PaymentItem.PaymentMethod">
+                  <option label="Select Payment Method"></option>
+                  <option value="Cash">Cash.</option>
+                </select>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Reason</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <textarea rows="3" class="form-control" placeholder="About this payment" name="Description" [(ngModel)]="Paymentform.Description"></textarea>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                </div>
+            </div>
+
+            <div class="steps-content" *ngIf="index == 'Second-content'">
+                <div class="az-content-label mg-b-5">Depositor Details</div>
+                <div class="pd-30 pd-sm-40 bg-gray-100">
+
+                    <div class="alert alert-solid-warning" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+                        <strong></strong> Kindly Complete this page with the required depositor details.
+                    </div>
+                    <!-- alert -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Depositor Name*</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter Depositor Name" name="DepositorName" [(ngModel)]="Paymentform.PaymentItem.DepositorName">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Depositor Email</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" name="DepositorEmail" [(ngModel)]="Paymentform.PaymentItem.DepositorEmail">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Depositor Address*</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <textarea rows="3" class="form-control" placeholder="Depositor address here" name="DepositorAddress" [(ngModel)]="Paymentform.PaymentItem.DepositorAddress"></textarea>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Depositor Phone Number</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter Depositor phone number here" name="DepositorPhoneNo" [(ngModel)]="Paymentform.PaymentItem.DepositorPhoneNo">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+                    <!--
+        <button class="btn btn-az-primary pd-x-30 mg-r-5">Register</button>
+        <button class="btn btn-dark pd-x-30">Cancel</button> -->
+                </div>
+
+            </div>
+
+            <div class="steps-content" *ngIf="index == 'third-content'">
+                <div class="az-content-label mg-b-5">Preview</div>
+                <div class="pd-30 pd-sm-40 bg-gray-100">
+                    <div class="alert alert-solid-warning" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+                        <strong>A Step Ahead!</strong> Preview your input, then click submit to complete your Payment.
+                    </div>
+                    <!-- alert -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Matric Number</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter Student Matric Number" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="form.MatricNumber">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Student Name</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" value="{{ form.FirstName }} {{ form.LastName }}" readonly>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Select Session</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="email" class="form-control" placeholder="Enter Student email" [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="Paymentform.SessionId">
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Select Program</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <textarea rows="3" class="form-control" [ngModelOptions]="{standalone: true}" readonly>{{ programProgramName }}</textarea>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">School Fee</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">N</span>
+                                </div>
+                                <input type="text" class="form-control text text-danger" aria-label="Amount (to the nearest dollar)" [ngModelOptions]="{standalone: true}" [(ngModel)]="Paymentform.SchoolFee" readonly>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">.00</span>
+                                </div>
+                            </div>
+                            <!-- input-group -->
+                            <!-- <input type="text" class="form-control text text-success" placeholder="Enter Student firstname" value="{{ programAmount }}" name="SchoolFee" [(ngModel)]="Paymentform.SchoolFee" required> -->
+                        </div>
+                        <!-- col -->
+
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Amount Paid</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">N</span>
+                                </div>
+                                <input type="text" class="form-control" aria-label="Amount (to the nearest Naira)" [ngModelOptions]="{standalone: true}" [(ngModel)]="Paymentform.PaymentItem.AmountPaid" readonly>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">.00</span>
+                                </div>
+                            </div>
+                            <!-- input-group -->
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Slip Number</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="email" class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="Paymentform.PaymentItem.SlipNo" readonly>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Payment Method</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <select class="form-control select2-no-search" [ngModelOptions]="{standalone: true}" [(ngModel)]="Paymentform.PaymentItem.PaymentMethod" readonly>
+              <option label="Select Payment Method"></option>
+              <option value="Cash">Cash.</option>
+              <option value="Transfer">Transfer.</option>
+              <option value="POS">POS.</option>
+              <option value="Paymet Gateway">Payment Gateway.</option>
+            </select>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Reason</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <textarea rows="3" class="form-control" placeholder="About this payment" [ngModelOptions]="{standalone: true}" [(ngModel)]="Paymentform.Description" readonly></textarea>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Depositor Name*</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter Depositor Name" [ngModelOptions]="{standalone: true}" [(ngModel)]="Paymentform.PaymentItem.DepositorName" readonly>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Depositor Email</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="email" class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="Paymentform.PaymentItem.DepositorEmail" readonly>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Depositor Address*</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <textarea rows="3" class="form-control" placeholder="Depositor address here" [ngModelOptions]="{standalone: true}" [(ngModel)]="Paymentform.PaymentItem.DepositorAddress" readonly></textarea>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Depositor Phone Number</label>
+                        </div>
+                        <!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" placeholder="Enter Depositor phone number here" [ngModelOptions]="{standalone: true}" [(ngModel)]="Paymentform.PaymentItem.DepositorPhoneNo" readonly>
+                        </div>
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+
+                </div>
+
+            </div>
+
+            <ng-template #footerTpl>
+                <div style="float: right">
+                    <button class="btn btn-dark pd-x-30 mg-r-5" (click)="close()">Cancel</button>
+                    <button class="btn btn-az-primary pd-x-30 mg-r-5" *ngIf="current == 0" (click)="next()">Next</button>
+                    <button class="btn btn-warning pd-x-30 mg-r-5" *ngIf="current == 1 || current == 2" (click)="back()">Back</button>
+                    <button class="btn btn-az-primary pd-x-30 mg-r-5" *ngIf="current == 1" (click)="next()">Proceed</button>
+                    <button class="btn btn-success pd-x-30 mg-r-5" *ngIf="current == 2 && !disabled" (click)="onSubmit()">Update Details</button>
+                    <!--
+        <button class="btn btn-danger pd-x-30 mg-r-5" *ngIf="current == 0 && !disabled && actionBotton == 'delete'" (click)="ondelete()" [disabled] = "!deleteForm.valid">Delete Now</button> -->
+                    <button class="btn btn-danger pd-x-30 mg-r-5" *ngIf="current == 2 && disabled" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Loading...
+        </button>
+
+                </div>
+            </ng-template>
+
+        </form>
+
+        <div class="steps-content" *ngIf="index == 'Fourth-content'">
+            <div class="pd-30 pd-sm-40 bg-gray-100">
+                <nz-result *ngIf="Status == 200" nzStatus="success" nzTitle="Payment Successfully Updated!" nzSubTitle="check payment details below:">
+                    <div nz-result-extra>
+                        <button nz-button nzType="primary" (click)="close()">Return Payment</button>
+                        <!-- <button nz-button>Go Dashboard</button> -->
+                    </div>
+                </nz-result>
+
+
+                <nz-result *ngIf="Status == 400" nzTitle="Submission Failed" nzStatus="error" nzSubTitle="Please check and modify the following information before resubmitting.">
+                    <div nz-result-content>
+                        <div class="desc">
+                            <h4 nz-title>The content you submitted has the following error:</h4>
+                            <ng-container *ngFor="let list of newresponse">
+                                <p nz-paragraph style="color: crimson;">
+                                    <i nz-icon nzType="close-circle"></i> {{ list.error }}: <a>{{ list.field }} &gt;</a>
+                                </p>
+                            </ng-container>
+
+                        </div>
+                    </div>
+                    <div nz-result-extra>
+                        <button nz-button nzType="primary" (click)="back()">Go Back</button>
+                        <button nz-button (click)="again()">Create Another</button>
+                    </div>
+                </nz-result>
+
+
+            </div>
+        </div>
+    </nz-drawer>
+
+
+    <nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzWidth]="720" [nzVisible]="visible2" nzTitle="Authorize Payment Request" [nzFooter]="footerTpl2" (nzOnClose)="close2()">
+        <!-- <div class="az-content-label mg-b-5">Create Student</div>
+<p class="mg-b-20">Student.</p> -->
+
+        <form #deleteForm=ngForm (ngSubmit)="onSubmit()">
+            <div class="steps-content" *ngIf="index2 == 'First-content'">
+                <ngx-ui-loader [loaderId]="'loader-01'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+                <div *ngIf="index == 'First-content'">
+                    <div class="pd-30 pd-sm-40 bg-gray-200">
+
+
+                        <div *ngIf="actionBotton == 'delete'" class="alert alert-solid-danger" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+                            <strong>You are about to delete a selected payment!</strong> <br> Kindly confirm and give reason for deleting selected payment.
+                        </div>
+                        <!-- alert -->
+
+                        <div *ngIf="actionBotton == 'approve'" class="alert alert-solid-warning" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+                            <strong>You are about to approve a selected payment!</strong> <br> Kindly confirm and give reason for your approval.
+                        </div>
+                        <!-- alert -->
+
+                        <div class="row row-xs align-items-center mg-b-20">
+                            <div class="col-md-4">
+                                <label class="form-label mg-b-0">Matric Number</label>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                <input type="text" class="form-control" value="{{ form.MatricNumber }}" readonly>
+                            </div>
+                            <!-- col -->
+                        </div>
+                        <!-- row -->
+
+                        <div class="row row-xs align-items-center mg-b-20">
+                            <div class="col-md-4">
+                                <label class="form-label mg-b-0">Student Name</label>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                <input type="text" class="form-control" value="{{ form.FirstName }} {{ form.LastName }}" readonly>
+                            </div>
+                            <!-- col -->
+                        </div>
+                        <!-- row -->
+
+                        <div class="row row-xs align-items-center mg-b-20">
+                            <div class="col-md-4">
+                                <label class="form-label mg-b-0">School Fee</label>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">N</span>
+                                    </div>
+                                    <input type="text" class="form-control text text-danger" aria-label="Amount (to the nearest dollar)" [ngModelOptions]="{standalone: true}" [(ngModel)]="Paymentform.SchoolFee" readonly>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">.00</span>
+                                    </div>
+                                </div>
+                                <!-- input-group -->
+                                <!-- <input type="text" class="form-control text text-success" placeholder="Enter Student firstname" value="{{ programAmount }}" name="SchoolFee" [(ngModel)]="Paymentform.SchoolFee" required> -->
+                            </div>
+                            <!-- col -->
+
+                        </div>
+                        <!-- row -->
+
+                        <div class="row row-xs align-items-center mg-b-20">
+                            <div class="col-md-4">
+                                <label class="form-label mg-b-0">Amount Paid</label>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">N</span>
+                                    </div>
+                                    <input type="text" class="form-control" aria-label="Amount (to the nearest Naira)" [ngModelOptions]="{standalone: true}" [(ngModel)]="Paymentform.PaymentItem.AmountPaid" readonly>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">.00</span>
+                                    </div>
+                                </div>
+                                <!-- input-group -->
+                            </div>
+                            <!-- col -->
+                        </div>
+                        <!-- row -->
+
+
+                        <div class="row row-xs align-items-center mg-b-20">
+                            <div class="col-md-4">
+                                <label class="form-label mg-b-0">Action</label>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-8 mg-t-5 mg-md-t-0">
+
+                                <div class="row mg-t-10">
+                                    <div class="col-lg-4">
+                                        <label class="rdiobox">
+                  <input name="rdio" type="radio" checked (click)="onAction('approve', $event)">
+                  <span>Approve</span>
+                </label>
+                                    </div>
+                                    <!-- col-3 -->
+                                    <div class="col-lg-4 mg-t-20 mg-lg-t-0">
+                                        <label class="rdiobox">
+                  <input name="rdio" type="radio" (click)="onAction('reject', $event)">
+                  <span>Reject</span>
+                </label>
+                                    </div>
+                                    <!-- col-3 -->
+                                </div>
+                                <!-- row -->
+
+
+                            </div>
+                            <!-- col -->
+                        </div>
+                        <!-- row -->
+
+                        <div class="row row-xs align-items-center mg-b-20">
+                            <div class="col-md-4">
+                                <label class="form-label mg-b-0">Reason</label>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                <textarea rows="3" class="form-control" placeholder="Student Description" name="Reason" [(ngModel)]="Approvepayment.Reason" required></textarea>
+                            </div>
+                            <!-- col -->
+                        </div>
+                        <!-- row -->
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="steps-content" *ngIf="index2 == 'Second-content'">
+                <div class="pd-30 pd-sm-40 bg-gray-100">
+                    <nz-result *ngIf="Status == 200 && !errorFlag" nzStatus="success" nzTitle="Operation Successful!" nzSubTitle="{{ errorMessage }}">
+                        <div nz-result-extra>
+                            <button nz-button nzType="primary" (click)="close2()">Go Pending Payment</button>
+                            <button nz-button (click)="close2()">Close</button>
+                        </div>
+                    </nz-result>
+
+                    <nz-result *ngIf="Status == 400 || errorFlag" nzTitle="Submission Failed" nzStatus="error" nzSubTitle="Please check and modify the following information before resubmitting.">
+                        <div nz-result-content>
+                            <div class="desc">
+                                <h4 nz-title>The content you submitted has the following error:</h4>
+
+                                <p nz-paragraph style="color: crimson;">
+                                    <i nz-icon nzType="close-circle"></i> {{ errorMessage }}
+                                </p>
+                                <ng-container *ngFor="let list of newresponse">
+                                    <p nz-paragraph style="color: crimson;">
+                                        <i nz-icon nzType="close-circle"></i> {{ list.error }}: <a>{{ list.field }} &gt;</a>
+                                    </p>
+                                </ng-container>
+
+                            </div>
+                        </div>
+                        <div nz-result-extra>
+                            <button nz-button nzType="primary" (click)="back2()">Go Back</button>
+                            <!-- <button nz-button (click)="close2()">Pending Payment</button> -->
+                        </div>
+                    </nz-result>
+                </div>
+            </div>
+
+            <ng-template #footerTpl2>
+                <div style="float: right">
+                    <button class="btn btn-dark pd-x-30 mg-r-5" (click)="close2()">Cancel</button>
+                    <button class="btn btn-info pd-x-30 mg-r-5" *ngIf="current2 == 0" (click)="viewOpen(paymentId)">View Details</button>
+                    <button class="btn btn-success pd-x-30 mg-r-5" *ngIf="current2 == 0 && !disabled && actionBotton == 'approve'" (click)="onapprove()" [disabled]="!deleteForm.valid">Submit</button>
+                    <button class="btn btn-danger pd-x-30 mg-r-5" *ngIf="current2 == 0 && !disabled && actionBotton == 'delete'" (click)="ondelete()" [disabled]="!deleteForm.valid">Delete Now</button>
+                    <button class="btn btn-danger pd-x-30 mg-r-5" *ngIf="current2 == 0 && disabled" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    Loading...
+  </button>
+
+                </div>
+            </ng-template>
+
+        </form>
+    </nz-drawer>
+</div>
+
+
+<nz-drawer [nzClosable]="false" [nzVisible]="ViewVisible" [nzWidth]="620" [nzPlacement]="placement" nzTitle="Basic Drawer" (nzOnClose)="viewClose()">
+    <ng-container *nzDrawerContent>
+        <p>Some contents...</p>
+        <div class="table-responsive" style="overflow-x:auto;">
+            <table class="table mg-b-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Header</th>
+                        <th>Value</th>
+                        <!-- <th>Salary</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Student Name</td>
+                        <td>{{ getPaymentDetail?.Student_Title }} {{ getPaymentDetail?.Student_FirstName }} {{ getPaymentDetail?.Student_LastName }} {{ getPaymentDetail?.Student_OtherName }}</td>
+                        <!-- <td>$320,800</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>Student Matric Number</td>
+                        <td>{{ getPaymentDetail?.Student_MatricNumber }}</td>
+                        <!-- <td>$170,750</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">3</th>
+                        <td>Student Phone Number</td>
+                        <td>{{ getPaymentDetail?.Student_PhoneNo }}</td>
+                        <!-- <td>$86,000</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">4</th>
+                        <td>Student Address</td>
+                        <td>{{ getPaymentDetail?.Student_Address }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">5</th>
+                        <td>Student Email</td>
+                        <td>{{ getPaymentDetail?.Student_Email }}</td>
+                        <!-- <td>$433,060</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">6</th>
+                        <td>Student Description</td>
+                        <td>{{ getPaymentDetail?.Student_Description }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">7</th>
+                        <td>Student Created Date</td>
+                        <td>{{ getPaymentDetail?.Student_Title }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">8</th>
+                        <td>Student DateUpdated</td>
+                        <td>{{ getPaymentDetail?.Student_DateUpdated }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">9</th>
+                        <td>Request Session</td>
+                        <td>{{ getPaymentDetail?.Request_SessionName }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">10</th>
+                        <td>Request Program Name</td>
+                        <td>{{ getPaymentDetail?.Request_ProgramName }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">11</th>
+                        <td>Request School</td>
+                        <td>{{ getPaymentDetail?.Request_SchoolName }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">12</th>
+                        <td>Request Deleted By</td>
+                        <td>{{ getPaymentDetail?.Request_IsDeleted }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">13</th>
+                        <td>Request Created By</td>
+                        <td>{{ getPaymentDetail?.Request_CreatedBy }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">14</th>
+                        <td>Request Branch Name</td>
+                        <td>{{ getPaymentDetail?.Request_BranchName }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">15</th>
+                        <td>Request Date Created</td>
+                        <td>{{ getPaymentDetail?.Request_DateCreated }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">16</th>
+                        <td>Request Date Updated</td>
+                        <td>{{ getPaymentDetail?.Request_DateUpdated }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">17</th>
+                        <td>Request Description</td>
+                        <td>{{ getPaymentDetail?.Request_Description }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">18</th>
+                        <td>Request Expected Amount</td>
+                        <td>{{ getPaymentDetail?.Request_ExpectedAmount }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">19</th>
+                        <td>Request School Fee</td>
+                        <td>{{ getPaymentDetail?.Request_SchoolFee }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+
+                    <tr>
+                        <th scope="row">20</th>
+                        <td>Status</td>
+                        <td>{{ getPaymentDetail?.Status }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">21</th>
+                        <td>Approved By</td>
+                        <td>{{ getPaymentDetail?.ApprovedBy }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">22</th>
+                        <td>Request Session Year</td>
+                        <td>{{ getPaymentDetail?.Request_SessionYear }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">23</th>
+                        <td>Request SolId</td>
+                        <td>{{ getPaymentDetail?.Request_SolId }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">24</th>
+                        <td>Request Updated By</td>
+                        <td>{{ getPaymentDetail?.Request_UpdatedBy }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">25</th>
+                        <td>Slip Number</td>
+                        <td>{{ getPaymentDetail?.SlipNo }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">26</th>
+                        <td>Request Total Payments</td>
+                        <td>{{ getPaymentDetail?.Request_TotalPayments }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">27</th>
+                        <td>AmountPaid</td>
+                        <td>{{ getPaymentDetail?.AmountPaid }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">28</th>
+                        <td>Airi Satou</td>
+                        <td>{{ getPaymentDetail?.Student_Title }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">29</th>
+                        <td>Remita Amount Debited</td>
+                        <td>{{ getPaymentDetail?.RemitaAmountDebited }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">30</th>
+                        <td>Remita Balance Due</td>
+                        <td>{{ getPaymentDetail?.RemitaBalanceDue }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">31</th>
+                        <td>Remita Payment Date</td>
+                        <td>{{ getPaymentDetail?.RemitaPaymentDate }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">32</th>
+                        <td>Remita Payment Ref</td>
+                        <td>{{ getPaymentDetail?.RemitaPaymentRef }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">33</th>
+                        <td>RemitaTotalAmount</td>
+                        <td>{{ getPaymentDetail?.RemitaTotalAmount }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">34</th>
+                        <td>Bank Charges</td>
+                        <td>{{ getPaymentDetail?.BankCharges }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+
+
+                    <tr>
+                        <th scope="row">35</th>
+                        <td>Created By</td>
+                        <td>{{ getPaymentDetail?.CreatedBy }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">36</th>
+                        <td>Payment Description</td>
+                        <td>{{ getPaymentDetail?.PaymentDescription }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">37</th>
+                        <td>Payment Method</td>
+                        <td>{{ getPaymentDetail?.PaymentMethod }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">38</th>
+                        <td>Payment Type</td>
+                        <td>{{ getPaymentDetail?.PaymentType }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">39</th>
+                        <td>Bank Charges</td>
+                        <td>{{ getPaymentDetail?.BankCharges }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">40</th>
+                        <td>Date Approved</td>
+                        <td>{{ getPaymentDetail?.DateApproved }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+
+                    <tr>
+                        <th scope="row">41</th>
+                        <td>Date Created</td>
+                        <td>{{ getPaymentDetail?.DateCreated }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">42</th>
+                        <td>Date Updated</td>
+                        <td>{{ getPaymentDetail?.DateUpdated }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">43</th>
+                        <td>Date Deleted</td>
+                        <td>{{ getPaymentDetail?.DateDeleted }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">44</th>
+                        <td>Date Approved</td>
+                        <td>{{ getPaymentDetail?.DateApproved }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+
+                    <tr>
+                        <th scope="row">45</th>
+                        <td>Debit Account</td>
+                        <td>{{ getPaymentDetail?.DebitAccount }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+
+                    <tr>
+                        <th scope="row">46</th>
+                        <td>Deleted By</td>
+                        <td>{{ getPaymentDetail?.DeletedBy }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+
+                    <tr>
+                        <th scope="row">47</th>
+                        <td>Depositor Name</td>
+                        <td>{{ getPaymentDetail?.DepositorName }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+
+                    <tr>
+                        <th scope="row">48</th>
+                        <td>Depositor Email</td>
+                        <td>{{ getPaymentDetail?.DepositorEmail }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">49</th>
+                        <td>Depositor Address</td>
+                        <td>{{ getPaymentDetail?.DepositorAddress }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">50</th>
+                        <td>Depositor Phone No</td>
+                        <td>{{ getPaymentDetail?.DepositorPhoneNo }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">51</th>
+                        <td>Description</td>
+                        <td>{{ getPaymentDetail?.Description }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">52</th>
+                        <td>EPin</td>
+                        <td>{{ getPaymentDetail?.EPin }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+                    <tr>
+                        <th scope="row">53</th>
+                        <td>RejectReason</td>
+                        <td>{{ getPaymentDetail?.RejectReason }}</td>
+                        <!-- <td>$162,700</td> -->
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <!-- table-responsive -->
+    </ng-container>
+</nz-drawer>

@@ -1,0 +1,225 @@
+<div class="pd-10 pd-t-20 bg-gray-100">
+  <!-- <div class="az-content-label mg-b-5">All Students</div> -->
+  <div class="row pd-b-10">
+    <div class="col-md-4">
+      <div class="az-content-label pt-3">Total Rejected Payments: {{ totalCount }} / {{ tableCount }}</div>
+    </div>
+
+    <div class="float-right col-md-8 mt-1">
+
+      <div class="az-header-center">
+
+        <input type="search" id="item_search" [(ngModel)]="search.student" class="form-control" placeholder="Search for Student...">
+        <button class="btn" style="margin-right: 30px;" (click)="onSearch()"><i class="typcn typcn-zoom"></i></button>
+        <button class="btn" (click)="onSearchCouncle()"><i class="typcn typcn-times"></i></button>
+
+      </div><!-- az-header-center -->
+    </div>
+  </div>
+
+    <nz-table nzShowSizeChanger
+    #fixedTable [nzData]="listOfData"
+    [nzScroll]="{ x: '700px', y: '1024px' }"
+    [nzFrontPagination]="false"
+    [nzLoading]="loading"
+    [nzTotal]="total"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageIndex"
+    (nzQueryParams)="onQueryParamsChange($event)"
+
+    >
+      <ngx-ui-loader [loaderId]="'loader-02'" [fgsColor]= "'#02A51D'"></ngx-ui-loader>
+      <thead>
+        <tr>
+          <th  nzWidth="60px">Id</th>
+          <th nzLeft>Matric Number</th>
+          <th nzColumnKey="name" [nzSortFn]="true">Full Name</th>
+          <th>School Fee</th>
+          <th nzColumnKey="email" [nzSortFn]="true">Amount Paid</th>
+          <th>Payment Type</th>
+          <th>Depositor Name</th>
+          <th>Payment Date</th>
+          <th nzRight>Action</th>
+        </tr>
+      </thead>
+      <tbody id="item">
+        <tr *ngFor="let data of fixedTable.data; let r= index">
+          <td  nzWidth="60px">{{ data.RequestId }}</td>
+          <td nzLeft>{{ data.Student_MatricNumber }}</td>
+          <td>{{ data.Student_FirstName }} {{ data.Student_LastName }} {{ data.Student_OtherName }}</td>
+          <td>{{ data.Request_SchoolFee | currency:'NGN':'symbol-narrow'}}</td>
+          <td>{{ data.AmountPaid | currency:'NGN':'symbol-narrow'}}</td>
+          <td>{{ data.PaymentType }}</td>
+          <td>{{ data.DepositorName }}</td>
+          <td>{{ data.DateCreated }}</td>
+          <td nzRight>
+            <div class="btn-icon-list dropdown dropleft mg-b-10">
+              <button class="btn btn-danger btn-icon" (click)="warning(data.Request_StudentId, data.Id, 'delete')"><i class="typcn typcn-trash"></i></button>
+
+            </div>
+          </td>
+      </tbody>
+    </nz-table>
+
+
+
+
+  <nz-drawer
+  [nzBodyStyle]="{ overflow: 'auto' }"
+  [nzMaskClosable]="false"
+  [nzWidth]="720"
+  [nzVisible]="visible2"
+  nzTitle="Delete Payment"
+  [nzFooter]="footerTpl2"
+  (nzOnClose)="close2()"
+>
+<!-- <div class="az-content-label mg-b-5">Create Student</div>
+<p class="mg-b-20">Student.</p> -->
+
+<form #deleteForm=ngForm>
+  <div class="steps-content" *ngIf="index2 == 'First-content'">
+  <ngx-ui-loader [loaderId]="'loader-01'" [fgsColor]= "'#02A51D'"></ngx-ui-loader>
+  <div *ngIf="index == 'First-content'">
+    <div class="pd-30 pd-sm-40 bg-gray-200">
+
+
+      <div *ngIf="actionBotton == 'delete'" class="alert alert-solid-danger" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <strong>You are about to delete a selected payment!</strong> <br> Kindly confirm and give reason for deleting selected payment.
+      </div><!-- alert -->
+
+      <div *ngIf="actionBotton == 'approve'" class="alert alert-solid-warning" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <strong>You are about to approve a selected payment!</strong> <br> Kindly confirm and give reason for your approval.
+      </div><!-- alert -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Matric Number</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <input type="text" class="form-control" value="{{ form.MatricNumber }}" readonly>
+        </div><!-- col -->
+      </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Student Name</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <input type="text" class="form-control" value="{{ form.FirstName }} {{ form.LastName }}" readonly>
+        </div><!-- col -->
+      </div><!-- row -->
+
+        <div class="row row-xs align-items-center mg-b-20">
+          <div class="col-md-4">
+            <label class="form-label mg-b-0">School Fee</label>
+          </div><!-- col -->
+          <div class="col-md-8 mg-t-5 mg-md-t-0">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">N</span>
+              </div>
+              <input type="text" class="form-control text text-danger" aria-label="Amount (to the nearest dollar)" [ngModelOptions]="{standalone: true}" [(ngModel)]="Paymentform.SchoolFee" readonly>
+              <div class="input-group-append">
+                <span class="input-group-text">.00</span>
+              </div>
+            </div><!-- input-group -->
+            <!-- <input type="text" class="form-control text text-success" placeholder="Enter Student firstname" value="{{ programAmount }}" name="SchoolFee" [(ngModel)]="Paymentform.SchoolFee" required> -->
+          </div><!-- col -->
+
+        </div><!-- row -->
+
+        <div class="row row-xs align-items-center mg-b-20">
+          <div class="col-md-4">
+            <label class="form-label mg-b-0">Amount Paid</label>
+          </div><!-- col -->
+          <div class="col-md-8 mg-t-5 mg-md-t-0">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">N</span>
+              </div>
+              <input type="text" class="form-control" aria-label="Amount (to the nearest Naira)" [ngModelOptions]="{standalone: true}" [(ngModel)]="Paymentform.PaymentItem.AmountPaid" readonly>
+              <div class="input-group-append">
+                <span class="input-group-text">.00</span>
+              </div>
+            </div><!-- input-group -->
+          </div><!-- col -->
+        </div><!-- row -->
+
+      <div class="row row-xs align-items-center mg-b-20">
+        <div class="col-md-4">
+          <label class="form-label mg-b-0">Reason</label>
+        </div><!-- col -->
+        <div class="col-md-8 mg-t-5 mg-md-t-0">
+          <textarea rows="3" class="form-control" placeholder="Student Description" name="Reason" [(ngModel)]="Approvepayment.Reason" required></textarea>
+        </div><!-- col -->
+      </div><!-- row -->
+    </div>
+  </div>
+</div>
+
+
+<div class="steps-content" *ngIf="index2 == 'Second-content'">
+  <div class="pd-30 pd-sm-40 bg-gray-100">
+    <nz-result
+    *ngIf="Status == 200 && !errorFlag"
+    nzStatus="success"
+    nzTitle="Operation Successful!"
+    nzSubTitle="{{ errorMessage }}"
+  >
+    <div nz-result-extra>
+      <button nz-button nzType="primary" (click)="close2()">Go Pending Payment</button>
+      <button nz-button (click)="close2()">Close</button>
+    </div>
+  </nz-result>
+
+  <nz-result
+  *ngIf="Status == 400 || errorFlag"
+  nzTitle="Submission Failed"
+  nzStatus="error"
+  nzSubTitle="Please check and modify the following information before resubmitting."
+>
+  <div nz-result-content>
+    <div class="desc">
+      <h4 nz-title>The content you submitted has the following error:</h4>
+
+      <p nz-paragraph style="color: crimson;">
+        <i nz-icon nzType="close-circle"></i>
+        {{ errorMessage }}
+      </p>
+      <ng-container *ngFor="let list of newresponse">
+        <p nz-paragraph style="color: crimson;">
+          <i nz-icon nzType="close-circle"></i>
+          {{ list.error }}: <a>{{ list.field }} &gt;</a>
+        </p>
+      </ng-container>
+
+    </div>
+  </div>
+  <div nz-result-extra>
+    <button nz-button nzType="primary" (click)="back2()">Go Back</button>
+      <button nz-button (click)="close2()">Pending Payment</button>
+  </div>
+</nz-result>
+</div>
+</div>
+
+<ng-template #footerTpl2>
+<div style="float: right">
+  <button class="btn btn-dark pd-x-30 mg-r-5" (click)="close2()">Cancel</button>
+  <button class="btn btn-danger pd-x-30 mg-r-5" *ngIf="current2 == 0 && !disabled && actionBotton == 'delete'" (click)="ondelete()" [disabled] = "!deleteForm.valid">Delete Now</button>
+  <button class="btn btn-danger pd-x-30 mg-r-5"  *ngIf="current2 == 0 && disabled" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    Loading...
+  </button>
+
+</div>
+</ng-template>
+
+</form>
+</nz-drawer>
+</div>

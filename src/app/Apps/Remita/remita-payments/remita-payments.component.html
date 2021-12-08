@@ -1,0 +1,903 @@
+<div class="az-content-header">
+    <div class="az-content-header-top">
+        <div>
+            <h2 class="az-content-title mg-b-5 mg-b-lg-8">Remita Management</h2>
+            <p class="mg-b-0">Get all transaction.</p>
+        </div>
+        <div class="az-dashboard-date">
+            <div class="date">
+                <div class="float-right"><button class="btn btn-primary btn-with-icon btn-block" [hidden]="!permissions.includes('CANLOGTRANSACTION')" (click)="open()"><i class="typcn typcn-plus"></i>New Payment</button></div>
+
+                <div class="float-right"><button class="btn btn-dark btn-with-icon btn-block" [hidden]="!permissions.includes('CANLOGTRANSACTION')" (click)="openRRRPayment()"><i class="typcn typcn-plus"></i>RRR Payment</button></div>
+            </div>
+            <!-- az-dashboard-date -->
+            <!-- <i class="icon ion-md-arrow-forward"></i> -->
+            <!-- <div class="date">
+        <button nz-button nzType="primary" [routerLink]= "['/manage-payments', {outlets: {payments: ['view-payments']}}]">Transactions</button>
+      </div> -->
+        </div>
+        <!-- az-dashboard-date -->
+    </div>
+    <!-- az-content-body-title -->
+
+    <div class="nav-wrapper">
+
+        <nav class="nav az-nav-line">
+            <a href="javascript::void(0)" [hidden]="!permissions.includes('CANVIEWPENDINGTRANSACTIONS')" [routerLink]="['/remita-payments', 'pending-transactions']" routerLinkActive="active" class="nav-link">Pending Transactions</a>
+            <a href="javascript::void(0)" [routerLink]="['/remita-payments', 'approved-transactions']" routerLinkActive="active" class="nav-link">Approved Transactions</a>
+            <a href="javascript::void(0)" [hidden]="!permissions.includes('CANVIEWALLTRANSACTIONS')" [routerLink]="['/remita-payments', 'all-transactions']" routerLinkActive="active" class="nav-link">Re-Initiate Transaction</a>
+        </nav>
+
+    </div>
+</div>
+
+
+<div class="az-content-body">
+
+    <div class="steps-content" *ngIf="indextab == 'First-content'">
+        <div class="pd-10 pd-t-20 bg-gray-100">
+            <div class="row pd-b-10">
+                <div class="col-md-4">
+                    <div class="az-content-label pt-3"> : {{ currentPage }} / {{ allReInitiateCount }}</div>
+                </div>
+
+                <div class="float-right col-md-8 mt-1">
+
+                    <div class="az-header-center">
+
+                        <input type="search" id="item_search" [(ngModel)]="search.SearchRRR" class="form-control" placeholder="Search for Student...">
+                        <button class="btn" style="margin-right: 30px;" (click)="onSearch()"><i class="typcn typcn-zoom"></i></button>
+                        <button class="btn" (click)="onSearchCouncle()"><i class="typcn typcn-times"></i></button>
+
+                    </div>
+                    <!-- az-header-center -->
+                </div>
+            </div>
+            <nz-table nzShowSizeChanger #fixedTable [nzData]="allReInitiateTransactions" [nzScroll]="{ x: '700px', y: '1024px' }" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="allReInitiateCount" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex" (nzQueryParams)="onQueryParamsChange($event)">
+                <thead>
+                    <tr>
+                        <th nzWidth="60px">S/N</th>
+                        <th>Payment Product Id </th>
+                        <th>Customer Id</th>
+                        <th>Amount</th>
+                        <th>Transaction Ref</th>
+                        <th>Status</th>
+                        <th nzRight>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="item2">
+                    <ng-container *ngFor="let data of fixedTable.data">
+                        <tr>
+                            <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+                            <td nzLeft nzWidth="200px">{{ data.billPaymentProductId }}</td>
+                            <td>{{ data.customerId }}</td>
+                            <td>{{ data.amount | currency:'NGN':'symbol-narrow'}}</td>
+                            <td>{{ data.transactionRef }}</td>
+                            <td>
+                                <span *ngIf="data.status == 'Pending'" class="badge badge-warning">{{ data.status }}</span>
+                                <span *ngIf="data.status != 'Pending'" class="badge badge-success">{{ data.status }}</span>
+                            </td>
+                            <td nzRight>
+                                <div class="btn-icon-list">
+                                    <button class="btn btn-warning btn-icon" (click)="reInitiate(data.id)"><i class="typcn typcn-refresh"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </nz-table>
+        </div>
+    </div>
+
+    <div class="steps-content" *ngIf="indextab == 'Second-content'">
+
+        <ngx-ui-loader [loaderId]="'loader-03'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+        <div class="pd-10 pd-t-20 bg-gray-100">
+            <div class="row pd-b-10">
+                <div class="col-md-4">
+
+                    <div class="az-content-label pt-3">Total Transaction: {{ currentPage }} / {{ totalCount }}</div>
+                </div>
+
+                <div class="float-right col-md-8 mt-1">
+
+                    <div class="az-header-center">
+
+                        <input type="search" id="item_search" [(ngModel)]="search.SearchRRR" class="form-control" placeholder="Search for Student...">
+                        <button class="btn" style="margin-right: 30px;" (click)="onSearch()"><i class="typcn typcn-zoom"></i></button>
+                        <button class="btn" (click)="onSearchCouncle()"><i class="typcn typcn-times"></i></button>
+
+                    </div>
+                    <!-- az-header-center -->
+                </div>
+            </div>
+
+            <nz-table nzShowSizeChanger #fixedTable [nzData]="allTransactions" [nzScroll]="{ x: '700px', y: '1024px' }" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="totalCount" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex" (nzQueryParams)="onQueryParamsChange($event)">
+                <thead>
+                    <tr>
+                        <th nzWidth="60px">S/N</th>
+                        <th>Payment Product Id </th>
+                        <th>Customer Id</th>
+                        <th>Amount</th>
+                        <th>Transaction Ref</th>
+                        <th>Status</th>
+                        <th nzRight>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="item2">
+                    <ng-container *ngFor="let data of fixedTable.data">
+                        <tr>
+                            <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+                            <td nzLeft nzWidth="200px">{{ data.billPaymentProductId }}</td>
+                            <td>{{ data.customerId }}</td>
+                            <td>{{ data.amount | currency:'NGN':'symbol-narrow'}}</td>
+                            <td>{{ data.transactionRef }}</td>
+                            <td>
+                                <span *ngIf="data.status == 'Pending'" class="badge badge-warning">{{ data.status }}</span>
+                                <span *ngIf="data.status != 'Pending'" class="badge badge-success">{{ data.status }}</span>
+                            </td>
+                            <td nzRight>
+                                <div class="btn-icon-list">
+                                    <button class="btn btn-info btn-icon" (click)="transactionQuery(data.id)"><i class="typcn typcn-eye"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [nzExpand]="expandSet.has(data.id)">
+                            <div class="az-content-label mg-b-5">More Details</div>
+
+                            <div class="table-responsive">
+                                <table class="table mg-b-0">
+                                    <!-- <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Header</th>
+                    <th>Value</th>
+                  </tr>
+                </thead> -->
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Depositor Name</td>
+                                            <td>{{ data.debitAccountName }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- table-responsive -->
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </nz-table>
+        </div>
+    </div>
+
+    <div class="steps-content" *ngIf="indextab == 'third-content'">
+
+        <ngx-ui-loader [loaderId]="'loader-03'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+        <div class="pd-10 pd-t-20 bg-gray-100">
+            <div class="row pd-b-10">
+                <div class="col-md-4">
+                    <div class="az-content-label pt-3">Total Transaction: {{ currentPage }} / {{ totalCount }}</div>
+                </div>
+
+                <div class="float-right col-md-8 mt-1">
+
+                    <div class="az-header-center">
+                        <input type="search" id="item_search" [(ngModel)]="search.SearchRRR" class="form-control" placeholder="Search for Student...">
+                        <button class="btn" style="margin-right: 30px;" (click)="onSearch()"><i class="typcn typcn-zoom"></i></button>
+                        <button class="btn" (click)="onSearchCouncle()"><i class="typcn typcn-times"></i></button>
+
+                    </div>
+                    <!-- az-header-center -->
+                </div>
+            </div>
+
+            <nz-table nzShowSizeChanger #fixedTable [nzData]="allTransactions" [nzScroll]="{ x: '700px', y: '1024px' }" [nzFrontPagination]="false" [nzLoading]="loading" [nzTotal]="totalCount" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex" (nzQueryParams)="onQueryParamsChange($event)">
+                <thead>
+                    <tr>
+                        <th nzWidth="60px">S/N</th>
+                        <th>Payment Product Id </th>
+                        <th>Customer Id</th>
+                        <th>Amount</th>
+                        <th>Transaction Ref</th>
+                        <th>Status</th>
+                        <th nzRight>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="item2">
+                    <ng-container *ngFor="let data of fixedTable.data">
+                        <tr>
+                            <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+                            <td nzLeft nzWidth="200px">{{ data.billPaymentProductId }}</td>
+                            <td>{{ data.customerId }}</td>
+                            <td>{{ data.amount | currency:'NGN':'symbol-narrow'}}</td>
+                            <td>{{ data.transactionRef }}</td>
+                            <td>
+                                <span *ngIf="data.status == 'Pending'" class="badge badge-warning">{{ data.status }}</span>
+                                <span *ngIf="data.status != 'Pending'" class="badge badge-success">{{ data.status }}</span>
+                            </td>
+                            <td nzRight>
+                                <div class="btn-icon-list">
+                                    <button class="btn btn-info btn-icon" (click)="transactionQuery(data.id)"><i class="typcn typcn-printer"></i></button>
+
+                                    <!-- <button class="btn btn-warning btn-icon" (click)="reInitiate(data.id)"><i class="typcn typcn-refresh"></i></button>
+
+                  <button class="btn btn-success btn-icon" (click)="openUpdate(data.id)"><i class="typcn typcn-printer"></i></button> -->
+                                </div>
+
+
+                            </td>
+                        </tr>
+                        <tr [nzExpand]="expandSet.has(data.id)">
+                            <div class="az-content-label mg-b-5">More Details</div>
+
+                            <div class="table-responsive">
+                                <table class="table mg-b-0">
+                                    <!-- <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Header</th>
+                    <th>Value</th>
+                  </tr>
+                </thead> -->
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Depositor Name</td>
+                                            <td>{{ data.debitAccountName }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- table-responsive -->
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </nz-table>
+        </div>
+    </div>
+</div>
+<!-- az-content-body -->
+
+
+<!-- Start New Payment Drawer -->
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzWidth]="920" [nzVisible]="visible" nzTitle="Add New Payment" [nzFooter]="footerTpl" (nzOnClose)="close()">
+
+    <nz-steps [nzCurrent]="current">
+        <nz-step nzTitle="Categories"></nz-step>
+        <nz-step nzTitle="Billers"></nz-step>
+        <nz-step nzTitle="Products/Validation"></nz-step>
+        <nz-step nzTitle="Payment"></nz-step>
+        <nz-step nzTitle="Finish"></nz-step>
+    </nz-steps> <br><br>
+    <form #signupForm=ngForm>
+        <ngx-ui-loader [loaderId]="'loader-02'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+        <div *ngIf="index == 'First-content'">
+            <div class="az-content-label mg-b-5">PAYMENTS CATEGORIES</div>
+            <p class="mg-b-20">Remita.</p>
+            <div class="pd-30 pd-sm-40 bg-gray-200">
+
+                <div class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0"></label>
+                    </div>
+                    <!-- col -->
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+
+                        <div class="alert alert-danger" [hidden]="!error">
+                            {{error}}
+                        </div>
+                        <div class="alert alert-success" [hidden]="!success">
+                            {{success}}
+                        </div>
+                    </div>
+                    <!-- col -->
+                </div>
+                <!-- row -->
+
+                <div class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">Select Category</label>
+                    </div>
+                    <!-- col -->
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <select class="form-control" (change)="onCategory($event)" required>
+                          <option label="Choose one"></option>
+                          <option *ngFor="let Category of billerCategories" value="{{ Category.categoryId }}">{{ Category.categoryName }}</option>
+                        </select>
+                        <div id="slErrorContainer3"></div>
+                    </div>
+                </div>
+                <!-- row -->
+            </div>
+        </div>
+
+        <div *ngIf="index == 'Second-content'">
+            <div class="pd-30 pd-sm-40 bg-gray-200">
+                <div class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">Select Biller</label>
+                    </div>
+                    <!-- col -->
+                    <div id="slWrapper2" class="parsley-select wd-250 mg-t-30 col-md-8 mg-t-5 mg-md-t-0">
+                        <select class="form-control select2" (change)="onBiller($event)" data-placeholder="Choose one" data-parsley-class-handler="#slWrapper2" data-parsley-errors-container="#slErrorContainer2" required>
+                          <option label="Choose one"></option>
+                          <option *ngFor="let biller of billersByCategory" value="{{ biller.billerId }}">{{ biller.billerName }}</option>
+                        </select>
+                        <div id="slErrorContainer2"></div>
+                    </div>
+                </div>
+                <!-- row -->
+            </div>
+        </div>
+
+
+        <div class="steps-content" *ngIf="index == 'third-content'">
+            <div class="pd-30 pd-sm-40 bg-gray-100">
+
+                <div class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">Select Product</label>
+                    </div>
+                    <!-- col -->
+                    <div id="slWrapper2" class="parsley-select wd-250 mg-t-30 col-md-8 mg-t-5 mg-md-t-0">
+                        <select class="form-control select2" (change)="onproduct($event)" data-placeholder="Choose one" data-parsley-class-handler="#slWrapper2" data-parsley-errors-container="#slErrorContainer2" required>
+                          <option label="Choose one"></option>
+                          <option *ngFor="let product of this.productData.products" value="{{ product.billPaymentProductId }}">{{ product.billPaymentProductName }}</option>
+                        </select>
+                        <div id="slErrorContainer2"></div>
+                    </div>
+                </div>
+                <!-- row -->
+
+                <div *ngIf="getProduct" class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">Amount</label>
+                    </div>
+                    <!-- col -->
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input *ngIf="getProduct.isAmountFixed" disabled type="text" class="form-control" value="{{ getProduct.amount | currency:'NGN':'symbol-narrow'}}">
+                        <input *ngIf="!getProduct.isAmountFixed" type="text" class="form-control" value="{{ getProduct.amount | currency:'NGN':'symbol-narrow' }}" readonly>
+                    </div>
+                    <!-- col -->
+                </div>
+                <!-- row -->
+
+                <div *ngIf="getProduct" class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">Currency</label>
+                    </div>
+                    <!-- col -->
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input type="text" class="form-control" value="{{ getProduct.currency }}">
+                    </div>
+                    <!-- col -->
+                </div>
+                <!-- row -->
+
+                <div *ngIf="getProduct" class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">Customer Id</label>
+                    </div>
+                    <!-- col -->
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input type="text" class="form-control" name="customerId" [(ngModel)]="customerValidation.customerId" required>
+                    </div>
+                    <!-- col -->
+                </div>
+                <!-- row -->
+
+                <div *ngIf="getProduct" class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-8">
+                        <button style="width: 100%" nz-button nzType="primary" (click)="customerValidate()" [nzLoading]="isLoadingOne">Validate Customer</button>
+                    </div>
+                </div>
+
+                <ng-container *ngIf="getProduct">
+                    <div *ngFor="let item of getProductCustomerFields; let r = index;" class="row row-xs align-items-center mg-b-20">
+                        <div class="row col-md-12" *ngIf="item.type === 'multiselect'">
+                            <div class="col-md-4">
+                                <label class="form-label mg-b-0">{{ item.display_name }} <span *ngIf="item.required" style="color: brown;">*</span> </label>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                <!-- <input type="text" class="form-control" name="{{ item.variable_name }}" value="" [(ngModel)]="this.billPayment.metadata.CustomFields[r].value"> -->
+                                <nz-select style="width: 100%;" name="{{ item.variable_name }}" nzAllowClear nzPlaceHolder="Select Item" nzMode="multiple" [(ngModel)]="this.billPayment.metadata.CustomFields[r].value">
+                                    <nz-option *ngFor="let option of item.selectOptions" [nzLabel]="option.display_name" [nzValue]="option.value"></nz-option>
+                                </nz-select>
+                            </div>
+                        </div>
+
+                        <div class="row col-md-12" *ngIf="item.type === 'singleselect'">
+                            <div class="col-md-4">
+                                <label class="form-label mg-b-0">{{ item.display_name }} <span *ngIf="item.required" style="color: brown;">*</span> </label>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                <!-- <input type="text" class="form-control" name="{{ item.variable_name }}" value="" [(ngModel)]="this.billPayment.metadata.CustomFields[r].value"> -->
+                                <nz-select style="width: 100%;" name="{{ item.variable_name }}" nzShowSearch nzAllowClear nzPlaceHolder="Select Item" [(ngModel)]="this.billPayment.metadata.CustomFields[r].value">
+                                    <nz-option *ngFor="let option of item.selectOptions" [nzLabel]="option.display_name" [nzValue]="option.value"></nz-option>
+                                </nz-select>
+                            </div>
+                        </div>
+
+                        <div class="row col-md-12" *ngIf="item.type === 'alphanumeric'">
+                            <div class="col-md-4">
+                                <label class="form-label mg-b-0">{{ item.display_name }} <span *ngIf="item.required" style="color: brown;">*</span> </label>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                <input *ngIf="item.variable_name === 'size'" type="text" class="form-control" name="{{ item.variable_name }}" value="" [(ngModel)]="this.billPayment.metadata.CustomFields[r].value">
+                                <input *ngIf="item.variable_name === 'reference_number'" type="text" class="form-control" name="{{ item.variable_name }}" value="" [(ngModel)]="this.billPayment.metadata.CustomFields[r].value">
+                                <input *ngIf="item.variable_name === 'varying_other_info'" type="text" class="form-control" name="{{ item.variable_name }}" value="" [(ngModel)]="this.billPayment.metadata.CustomFields[r].value">
+                                <input *ngIf="item.variable_name === 'address'" type="text" maxlength="10" class="form-control" name="{{ item.variable_name }}" value="" [(ngModel)]="this.billPayment.metadata.CustomFields[r].value" placeholder="Maximum of 10 characters">
+                            </div>
+                        </div>
+
+                        <div class="row col-md-12" *ngIf="item.type === 'alphabetic'">
+                            <div class="col-md-4">
+                                <label class="form-label mg-b-0">{{ item.display_name }} <span *ngIf="item.required" style="color: brown;">*</span> </label>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                <input type="text" class="form-control" name="{{ item.variable_name }}" value="" [(ngModel)]="this.billPayment.metadata.CustomFields[r].value">
+                            </div>
+                        </div>
+
+                        <div class="row col-md-12" *ngIf="item.type === 'text'">
+                            <div class="col-md-4">
+                                <label class="form-label mg-b-0">{{ item.display_name }} <span *ngIf="item.required" style="color: brown;">*</span> </label>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                <input type="text" class="form-control" name="{{ item.variable_name }}" value="" [(ngModel)]="this.billPayment.metadata.CustomFields[r].value">
+                            </div>
+                        </div>
+
+                        <div class="row col-md-12" *ngIf="item.type === 'numeric'">
+                            <div class="col-md-4">
+                                <label class="form-label mg-b-0">{{ item.display_name }} <span *ngIf="item.required" style="color: brown;">*</span> </label>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                <input type="text" class="form-control" name="{{ item.variable_name }}" value="" [(ngModel)]="this.billPayment.metadata.CustomFields[r].value">
+                            </div>
+                        </div>
+
+                        <div class="row col-md-12" *ngIf="item.type === 'date'">
+                            <div class="col-md-4">
+                                <label class="form-label mg-b-0">{{ item.display_name }} <span *ngIf="item.required" style="color: brown;">*</span> </label>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-8 mg-t-5 mg-md-t-0">
+                                <input type="text" class="form-control" name="{{ item.variable_name }}" value="" [(ngModel)]="this.billPayment.metadata.CustomFields[r].value">
+                            </div>
+                        </div>
+
+                        <!-- col -->
+                    </div>
+                    <!-- row -->
+                </ng-container>
+            </div>
+        </div>
+
+
+        <div *ngIf="index == 'Fourth-content'">
+            <div class="pd-30 pd-sm-40 bg-gray-200">
+                <div class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-8">
+                        <div *ngIf="isSuccess != 99 && errors != false" class="alert alert-success" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            <strong>Customer Validation Successfull!</strong> {{ returnMessage }}.
+                        </div>
+                        <!-- alert -->
+                        <div *ngIf="isSuccess == 99 && errors != false" class="alert alert-danger mg-b-0" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            <strong>Faild!</strong> Customer Validation faild.
+                        </div>
+                        <!-- alert -->
+                    </div>
+                </div>
+
+
+                <!-- <div class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">Product Name</label>
+                    </div>
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input type="text" class="form-control" value="{{ customerValidation.billPaymentProductName }}" disabled>
+                    </div>
+                </div> -->
+                <!-- row -->
+
+
+                <div class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">Product Id</label>
+                    </div>
+                    <!-- col -->
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input type="text" class="form-control" value="{{ customerValidation.billPaymentProductId }}" disabled>
+                    </div>
+                    <!-- col -->
+                </div>
+                <!-- row -->
+
+                <!-- <div class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">Customer Id</label>
+                    </div>
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input type="text" class="form-control" name="customerId" [(ngModel)]="billPayment.customerId" readonly>
+                    </div>
+                </div> -->
+                <!-- row -->
+
+                <div *ngIf="getProduct" class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">Customer Name</label>
+                    </div>
+                    <!-- col -->
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input type="text" class="form-control" name="name" [(ngModel)]="billPayment.name" required>
+                    </div>
+                    <!-- col -->
+                </div>
+                <!-- row -->
+
+                <div *ngIf="getProduct" class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">Customer Email</label>
+                    </div>
+                    <!-- col -->
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input type="text" class="form-control" name="email" [(ngModel)]="billPayment.email" required>
+                    </div>
+                    <!-- col -->
+                </div>
+                <!-- row -->
+
+                <div *ngIf="getProduct" class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">Customer Phone</label>
+                    </div>
+                    <!-- col -->
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input type="text" class="form-control" name="phoneNumber" [(ngModel)]="billPayment.phoneNumber" required>
+                    </div>
+                    <!-- col -->
+                </div>
+                <!-- row -->
+
+                <div *ngIf="getProduct" class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">Amount</label>
+                    </div>
+                    <!-- col -->
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input *ngIf="getProduct.isAmountFixed" name="amount" [(ngModel)]="billPayment.amount" readonly type="text" class="form-control" value="{{ getProduct.amount | currency:'NGN':'symbol-narrow' }}">
+                        <input *ngIf="!getProduct.isAmountFixed" name="amount" [(ngModel)]="billPayment.amount" type="text" class="form-control">
+                    </div>
+                    <!-- col -->
+                </div>
+                <!-- row -->
+
+                <!-- <ng-container *ngIf="getProduct">
+                    <div *ngFor="let item of getProductCustomerFields; let r = index;" class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">{{ item.display_name }} <span *ngIf="item.required" style="color: brown;">*</span> </label>
+                        </div>
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                            <input type="text" class="form-control" name="{{ item.variable_name }}" value="" [(ngModel)]="this.billPayment.metadata.CustomFields[r].value" readonly>
+                        </div>
+                    </div>
+                </ng-container> -->
+
+            </div>
+        </div>
+
+        <div *ngIf="index == 'fifth-content'">
+            <div class="pd-30 pd-sm-40 bg-gray-100">
+                <nz-result *ngIf="isSuccess" nzStatus="success" nzTitle="Payment Initiated Successfully!" nzSubTitle="check payment details below:">
+                    <div nz-result-extra>
+                        <button nz-button nzType="primary" (click)="close()">Return To Payment Page</button>
+                        <!-- <button nz-button>Go Dashboard</button> -->
+                    </div>
+                </nz-result>
+
+
+                <nz-result *ngIf="isFailure" nzTitle="Transaction Failed" nzStatus="error" nzSubTitle="Please check and modify the following information before Initiating the Transaction.">
+                    <div nz-result-content>
+                        <div class="desc">
+                            <h4 nz-title>The content you submitted has the following error:</h4>
+                            <ng-container>
+                                <p nz-paragraph style="color: crimson;">
+                                    <i nz-icon nzType="close-circle"></i> {{ errorMessage }}
+                                </p>
+                            </ng-container>
+
+                        </div>
+                    </div>
+                    <div nz-result-extra>
+                        <!-- <button nz-button nzType="primary" (click)="back()">Go Back</button> -->
+                        <button nz-button (click)="again()">Create Another</button>
+                    </div>
+                </nz-result>
+
+
+            </div>
+        </div>
+
+        <ng-template #footerTpl>
+            <div style="float: right">
+                <button class="btn btn-dark pd-x-30 mg-r-5" (click)="close()">Cancel</button>
+                <button class="btn btn-warning pd-x-30 mg-r-5" *ngIf="current >= 1" (click)="back()">Back</button>
+                <button class="btn btn-az-primary pd-x-30 mg-r-5" *ngIf="current == 2" (click)="next2()">Next</button>
+                <button class="btn btn-az-primary pd-x-30 mg-r-5" *ngIf="current == 3" (click)="InitializePayment()">Initiate Payments</button>
+                <button class="btn btn-az-primary pd-x-30 mg-r-5" *ngIf="current == 4" (click)="close()">Done</button>
+                <button class="btn btn-success pd-x-30 mg-r-5" *ngIf="current == 4 && disabled" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+  Loading...
+</button>
+
+            </div>
+        </ng-template>
+    </form>
+</nz-drawer>
+<!-- End New Payment Drawer -->
+
+<!-- Start RRR Payment Drawer -->
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzWidth]="920" [nzVisible]="OpenRRPayment" nzTitle="RRR Payment" [nzFooter]="footerTplRRRPayment" (nzOnClose)="closeRRPayment()">
+
+    <nz-steps [nzCurrent]="RRRcurrent">
+        <nz-step nzTitle="RRR Code"></nz-step>
+        <nz-step nzTitle="Finish"></nz-step>
+    </nz-steps> <br><br>
+    <form #signupForm=ngForm>
+        <ngx-ui-loader [loaderId]="'loader-04'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+        <div *ngIf="RRRindex == 'First-content'">
+            <div class="az-content-label mg-b-5">RRR Code</div>
+            <p class="mg-b-20">Insert Customer RRR code.</p>
+            <div class="pd-30 pd-sm-40 bg-gray-200">
+
+                <div class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0"></label>
+                    </div>
+                    <!-- col -->
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+
+                        <div class="alert alert-danger" [hidden]="!error">
+                            {{error}}
+                        </div>
+                        <div class="alert alert-success" [hidden]="!success">
+                            {{success}}
+                        </div>
+                    </div>
+                    <!-- col -->
+                </div>
+                <!-- row -->
+
+                <div class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">RRR Code</label>
+                    </div>
+                    <!-- col -->
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input type="text" class="form-control" name="customerId" [(ngModel)]="paymentNotification.rrr" required>
+                        <div id="slErrorContainer3"></div>
+                    </div>
+                </div>
+                <!-- row -->
+            </div>
+        </div>
+
+        <div *ngIf="RRRindex == 'Second-content'">
+            <div class="pd-30 pd-sm-40 bg-gray-100">
+                <nz-result *ngIf="isSuccess" nzStatus="success" nzTitle="RRR Validated Successfully!" nzSubTitle="Please Check Detils Below:">
+
+                    <div nz-result-content>
+                        <div class="desc" *ngIf="rrrDetails">
+                            <h4 nz-title>Amount: {{ rrrDetails.amount | currency:'NGN':'symbol-narrow' }}</h4>
+                            <h5 nz-title>Customer Name: {{ rrrDetails.name }}</h5>
+                            <h5 nz-title>Customer Email: {{ rrrDetails.email }}</h5>
+                            <h5 nz-title>Customer Phone Number: {{ rrrDetails.phoneNumber }}</h5>
+                            <h5 nz-title>Transaction Date: {{ rrrDetails.metadata.transactionDate }}</h5>
+                        </div>
+                    </div>
+
+                    <div nz-result-extra>
+                        <button nz-button nzType="primary" (click)="close()">Close</button>
+                        <button nz-button (click)="again()">Generate Another</button>
+                    </div>
+                </nz-result>
+
+
+                <nz-result *ngIf="isFailure" nzTitle="Invalid RRR code" nzStatus="error" nzSubTitle="The content you submitted has the following error:">
+                    <div nz-result-content>
+                        <div class="desc">
+                            <!-- <h4 nz-title></h4> -->
+                            <ng-container>
+                                <h4 nz-paragraph style="color: crimson;">
+                                    <i nz-icon nzType="close-circle"></i> {{ errorMessage }}
+                                </h4>
+                            </ng-container>
+
+                        </div>
+                    </div>
+                    <div nz-result-extra>
+                        <button nz-button nzType="primary" (click)="back()">Go Back</button>
+                        <button nz-button (click)="again()">Generate Another</button>
+                    </div>
+                </nz-result>
+
+
+            </div>
+        </div>
+    </form>
+
+    <ng-template #footerTplRRRPayment>
+        <div style="float: right">
+            <button class="btn btn-dark pd-x-30 mg-r-5" (click)="closeRRPayment()">Close</button>
+            <button class="btn btn-warning pd-x-30 mg-r-5" *ngIf="RRRcurrent >= 1" (click)="back()">Back</button>
+            <button class="btn btn-az-primary pd-x-30 mg-r-5" *ngIf="RRRcurrent == 0" (click)="getRrrDetails()">Initiate RRR</button>
+            <button class="btn btn-success pd-x-30 mg-r-5" *ngIf="RRRcurrent == 4 && disabled" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+Loading...
+</button>
+
+        </div>
+    </ng-template>
+</nz-drawer>
+<!-- End RRR Payment Drawer -->
+
+
+<!-- Start View Drawer -->
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="false" [nzWidth]="920" [nzVisible]="visibleRRR" nzTitle="Approve" [nzFooter]="footerTplRRR" (nzOnClose)="closeRRR()">
+    <div *ngIf="index == 'First-content'">
+        <div class="pd-30 pd-sm-40 bg-gray-200" *ngIf="allTransactionQuery">
+            <ngx-ui-loader [loaderId]="'loader-05'" [fgsColor]="'#02A51D'"></ngx-ui-loader>
+            <div class="row row-xs align-items-center mg-b-20">
+                <div class="col-md-4">
+                    <label class="form-label mg-b-0">RRR code</label>
+                </div>
+                <!-- col -->
+                <div class="col-md-8 mg-t-5 mg-md-t-0">
+                    <input type="text" class="form-control" value="{{ rrrDetails.rrr }}" disabled>
+                </div>
+                <!-- col -->
+            </div>
+            <!-- row -->
+
+            <div class="row row-xs align-items-center mg-b-20">
+                <div class="col-md-4">
+                    <label class="form-label mg-b-0"> Customer Name</label>
+                </div>
+                <!-- col -->
+                <div class="col-md-8 mg-t-5 mg-md-t-0">
+                    <input type="text" class="form-control" value="{{ rrrDetails.name }}" disabled>
+                </div>
+                <!-- col -->
+            </div>
+            <!-- row -->
+
+            <div class="row row-xs align-items-center mg-b-20">
+                <div class="col-md-4">
+                    <label class="form-label mg-b-0">Customer Email</label>
+                </div>
+                <!-- col -->
+                <div class="col-md-8 mg-t-5 mg-md-t-0">
+                    <input type="text" class="form-control" value="{{ rrrDetails.email }}" disabled>
+                </div>
+                <!-- col -->
+            </div>
+            <!-- row -->
+
+            <div class="row row-xs align-items-center mg-b-20">
+                <div class="col-md-4">
+                    <label class="form-label mg-b-0">Amount</label>
+                </div>
+                <!-- col -->
+                <div class="col-md-8 mg-t-5 mg-md-t-0">
+                    <input type="text" class="form-control" value="{{ rrrDetails.amount | currency:'NGN':'symbol-narrow'  }}" disabled>
+                </div>
+                <!-- col -->
+            </div>
+            <!-- row -->
+
+            <div class="row row-xs align-items-center mg-b-20">
+                <div class="col-md-4">
+                    <label class="form-label mg-b-0">Fee</label>
+                </div>
+                <!-- col -->
+                <div class="col-md-8 mg-t-5 mg-md-t-0">
+                    <input type="text" class="form-control" value="{{ rrrDetails2.fee | currency:'NGN':'symbol-narrow'  }}" disabled>
+                </div>
+                <!-- col -->
+            </div>
+            <!-- row -->
+
+            <div class="row row-xs align-items-center mg-b-20">
+                <div class="col-md-4">
+                    <label class="form-label mg-b-0">Phone Number</label>
+                </div>
+                <!-- col -->
+                <div class="col-md-8 mg-t-5 mg-md-t-0">
+                    <input type="text" class="form-control" value="{{ rrrDetails.phoneNumber }}" disabled>
+                </div>
+                <!-- col -->
+            </div>
+            <!-- row -->
+
+            <ng-container *ngIf="rrrDetails">
+                <div *ngFor="let item of  rrrDetails.data; let r = index;" class="row row-xs align-items-center mg-b-20">
+                    <div class="col-md-4">
+                        <label class="form-label mg-b-0">{{ item.variable_name }} </label>
+                    </div>
+                    <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input type="text" class="form-control" name="{{ item.variable_name }}" value="{{ item.value }}" disabled>
+                    </div>
+                </div>
+            </ng-container>
+
+        </div>
+    </div>
+
+    <div *ngIf="index == 'Second-content'">
+        <div class="pd-30 pd-sm-40 bg-gray-100">
+            <nz-result *ngIf="isSuccess" nzStatus="success" nzTitle="RRR Validated Successfully!" nzSubTitle="Please Check Detils Below:">
+
+                <div nz-result-content>
+                    <div class="desc" *ngIf="rrrDetails">
+                        <h4 nz-title>Amount: {{ rrrDetails.amount | currency:'NGN':'symbol-narrow' }}</h4>
+                        <h5 nz-title>Customer Name: {{ rrrDetails.name }}</h5>
+                        <h5 nz-title>Customer Email: {{ rrrDetails.email }}</h5>
+                        <h5 nz-title>Customer Phone Number: {{ rrrDetails.phoneNumber }}</h5>
+                        <!-- <h5 nz-title>Transaction Date: {{ rrrDetails.metadata.transactionDate }}</h5> -->
+                    </div>
+                </div>
+
+                <div nz-result-extra>
+                    <button nz-button nzType="primary" (click)="close()">Close</button>
+                    <button nz-button (click)="again()">Generate Another</button>
+                </div>
+            </nz-result>
+
+
+            <nz-result *ngIf="isFailure" nzTitle="Invalid RRR code" nzStatus="error" nzSubTitle="The content you submitted has the following error:">
+                <div nz-result-content>
+                    <div class="desc">
+                        <ng-container>
+                            <h4 nz-paragraph style="color: crimson;">
+                                <i nz-icon nzType="close-circle"></i> {{ errorMessage }}
+                            </h4>
+                        </ng-container>
+
+                    </div>
+                </div>
+                <div nz-result-extra>
+                    <button nz-button nzType="primary" (click)="back()">Go Back</button>
+                    <button nz-button (click)="again()">Generate Another</button>
+                </div>
+            </nz-result>
+        </div>
+    </div>
+
+    <ng-template #footerTplRRR>
+        <div style="float: right">
+            <button class="btn btn-dark pd-x-30 mg-r-5" (click)="closeRRR()">Close</button>
+            <button class="btn btn-warning pd-x-30 mg-r-5" [hidden]="!permissions.includes('CANVIEWAPPROVEDTRANSACTIONS')" *ngIf="approveTrans" (click)="PaymentNotification()">Approve Payment</button>
+            <a class="btn btn-info pd-x-30 mg-r-5" [hidden]="!permissions.includes('CANPRINTRECEIPT')" *ngIf="isApproved && rrrDetails" target="_blank" [href]="rrrDetails"><i class="typcn typcn-printer"></i> Print</a>
+            <button class="btn btn-success pd-x-30 mg-r-5" *ngIf="current == 4 && disabled" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+          </button>
+
+        </div>
+    </ng-template>
+</nz-drawer>
+<!-- End View Drawer -->

@@ -1,0 +1,221 @@
+<div class="az-dashboard-nine" *ngIf="app == 'none'">
+
+  <div class="az-header az-header-primary">
+    <div class="container">
+      <div class="az-header-left">
+        <a href="index.html" class="az-logo" routerLink="login"><img src="assets/img/icons/android-icon-48x48.png" alt=""></a>
+        <a href="javascript::void(0)" id="azNavShow" class="az-header-menu-icon d-lg-none"><span></span></a>
+      </div><!-- az-header-left -->
+      <div class="az-header-center">
+        <!-- <input type="search" id="item_search" class="form-control" placeholder="Search for anything...">
+        <button class="btn"><i class="typcn typcn-zoom"></i></button> -->
+      </div><!-- az-header-center -->
+      <div class="az-header-right">
+        <div class="az-header-message">
+          <a href="javascript::void(0)" (click)="OnRoute('none')"><i class="typcn typcn-th-small-outline"></i></a>
+        </div><!-- az-header-message -->
+        <!-- <div class="dropdown az-header-notification">
+          <a href="javascript::void(0)" class="new"><i class="typcn typcn-bell"></i></a>
+          <div class="dropdown-menu">
+            <div class="az-dropdown-header mg-b-20 d-sm-none">
+              <a href="javascript::void(0)" class="az-header-arrow"><i class="icon ion-md-arrow-back"></i></a>
+            </div>
+            <h6 class="az-notification-title">Notifications</h6>
+            <p class="az-notification-text">You have 2 unread notification</p>
+            <div class="az-notification-list">
+              <div class="media new">
+                <div class="az-img-user"><img src="../img/img2.jpg" alt=""></div>
+                <div class="media-body">
+                  <p>Congratulate <strong>Socrates Itumay</strong> for work anniversaries</p>
+                  <span>Mar 15 12:32pm</span>
+                </div>
+              </div>
+              <div class="media new">
+                <div class="az-img-user online"><img src="../img/img3.jpg" alt=""></div>
+                <div class="media-body">
+                  <p><strong>Joyce Chua</strong> just created a new blog post</p>
+                  <span>Mar 13 04:16am</span>
+                </div>
+              </div>
+              <div class="media">
+                <div class="az-img-user"><img src="../img/img4.jpg" alt=""></div>
+                <div class="media-body">
+                  <p><strong>Althea Cabardo</strong> just created a new blog post</p>
+                  <span>Mar 13 02:56am</span>
+                </div>
+              </div>
+              <div class="media">
+                <div class="az-img-user"><img src="../img/img5.jpg" alt=""></div>
+                <div class="media-body">
+                  <p><strong>Adrian Monino</strong> added new comment on your photo</p>
+                  <span>Mar 12 10:40pm</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer"><a href="javascript::void(0)">View All Notifications</a></div>
+          </div>
+        </div> -->
+        <div class="dropdown az-profile-menu">
+          <a href="javascript::void(0)" class="az-img-user"><img src="assets/img/default.jpg" alt=""></a>
+          <div class="dropdown-menu">
+            <div class="az-dropdown-header d-sm-none">
+              <a href="javascript::void(0)" class="az-header-arrow"><i class="icon ion-md-arrow-back"></i></a>
+            </div>
+            <div class="az-header-profile">
+              <div class="az-img-user">
+                <img src="assets/img/default.jpg" alt="">
+              </div><!-- az-img-user -->
+              <h6>{{ profResponds.username }}</h6>
+              <span>{{ profResponds.email }}</span>
+            </div><!-- az-header-profile -->
+
+            <!-- <a href="javascript::void(0)" class="dropdown-item"><i class="typcn typcn-user-outline" routerLink="profile" *ngIf="loggedIn"></i> My Profile</a>
+            <a href="javascript::void(0)" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
+            <a href="javascript::void(0)" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>
+            <a href="javascript::void(0)" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a> -->
+            <a href="javascript::void(0)" class="dropdown-item" (click)=logout($event)  *ngIf="loggedIn"><i class="typcn typcn-power-outline"></i> Sign Out</a>
+          </div><!-- dropdown-menu -->
+        </div>
+      </div><!-- az-header-right -->
+    </div><!-- container -->
+  </div><!-- az-header -->
+
+    <div class="az-content">
+      <app-general-dashboard></app-general-dashboard>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+<div class="az-body-sidebar az-body-dashboard-nine" *ngIf="app != 'none'">
+  <div class="az-sidebar az-sidebar-sticky az-sidebar-indigo-dark">
+  <div class="az-sidebar-header">
+    <a href="index.html" class="az-logo">{{app}}</a>
+  </div><!-- az-sidebar-header -->
+  <div class="az-sidebar-body mt-4">
+    <ul class="nav">
+      <li class="nav-label">Main Menu</li>
+      <li class="nav-item" *ngFor="let data of menuData">
+        <ng-container [hidden]="!permissions.includes(data.permission) || data.permission !== true">
+          <a *ngIf="data.childRoute === ''" href="javascript::void(0)" [routerLink]="[data.rounte]" class="nav-link with-sub"><i class="{{ data.icon }}"></i>{{data.name}}</a>
+           <a *ngIf="data.childRoute !== ''" href="javascript::void(0)" [routerLink]="['/'+data.rounte,{outlets: {Payments: [data.childRoute]}}]" class="nav-link with-sub"><i class="{{ data.icon }}"></i>{{data.name}}</a>
+          <ul class="nav-sub" *ngIf="data.expand">
+            <li class="nav-sub-item" *ngFor="let cData of data.children">
+              <ng-container *ngIf="this.permissions.includes(cData.permission) || cData.permission == true">
+                <a *ngIf="cData.childRoute === ''" href="javascript::void(0)" [routerLink]="[cData.rounte]" class="nav-sub-link">{{cData.name}}</a>
+                <a *ngIf="cData.childRoute !== ''" href="javascript::void(0)" [routerLink]="['/'+cData.rounte,{outlets: {Payments: [cData.childRoute]}}]" class="nav-sub-link">{{cData.name}}</a>
+              </ng-container>
+            </li>
+          </ul>
+        </ng-container>
+      </li>
+
+
+
+
+    </ul><!-- nav -->
+  </div><!-- az-sidebar-body -->
+</div><!-- az-sidebar -->
+
+
+      <div class="az-body-sidebar az-content az-content-dashboard-nine">
+          <div class="az-header az-header-dashboard-nine">
+        <div class="container-fluid">
+          <div class="az-header-left">
+            <a href="javascript::void(0)" id="azSidebarToggle" class="az-header-menu-icon"><span></span></a>
+          </div><!-- az-header-left -->
+          <div class="az-header-center">
+            <!-- <input type="search" class="form-control" placeholder="Search for anything...">
+            <button class="btn"><i class="typcn typcn-zoom"></i></button> -->
+          </div><!-- az-header-center -->
+          <div class="az-header-right">
+            <div class="az-header-message">
+              <a href="my-apps" (click)="OnRoute('none')"><i class="typcn typcn-th-small-outline"></i></a>
+            </div><!-- az-header-message -->
+            <!-- <div class="dropdown az-header-notification">
+              <a href="javascript::void(0)" class="new"><i class="typcn typcn-bell"></i></a>
+              <div class="dropdown-menu">
+                <div class="az-dropdown-header mg-b-20 d-sm-none">
+                  <a href="javascript::void(0)" class="az-header-arrow"><i class="icon ion-md-arrow-back"></i></a>
+                </div>
+                <h6 class="az-notification-title">Notifications</h6>
+                <p class="az-notification-text">You have 2 unread notification</p>
+                <div class="az-notification-list">
+                  <div class="media new">
+                    <div class="az-img-user"><img src="../img/img2.jpg" alt=""></div>
+                    <div class="media-body">
+                      <p>Congratulate <strong>Socrates Itumay</strong> for work anniversaries</p>
+                      <span>Mar 15 12:32pm</span>
+                    </div>
+                  </div>
+                  <div class="media new">
+                    <div class="az-img-user online"><img src="../img/img3.jpg" alt=""></div>
+                    <div class="media-body">
+                      <p><strong>Joyce Chua</strong> just created a new blog post</p>
+                      <span>Mar 13 04:16am</span>
+                    </div>
+                  </div>
+                  <div class="media">
+                    <div class="az-img-user"><img src="../img/img4.jpg" alt=""></div>
+                    <div class="media-body">
+                      <p><strong>Althea Cabardo</strong> just created a new blog post</p>
+                      <span>Mar 13 02:56am</span>
+                    </div>
+                  </div>
+                  <div class="media">
+                    <div class="az-img-user"><img src="../img/img5.jpg" alt=""></div>
+                    <div class="media-body">
+                      <p><strong>Adrian Monino</strong> added new comment on your photo</p>
+                      <span>Mar 12 10:40pm</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="dropdown-footer"><a href="javascript::void(0)">View All Notifications</a></div>
+              </div>
+            </div> -->
+            <div class="dropdown az-profile-menu">
+              <a href="javascript::void(0)" class="az-img-user"><img src="assets/img/default.jpg" alt=""></a>
+              <div class="dropdown-menu">
+                <div class="az-dropdown-header d-sm-none">
+                  <a href="javascript::void(0)" class="az-header-arrow"><i class="icon ion-md-arrow-back"></i></a>
+                </div>
+                <div class="az-header-profile">
+                  <div class="az-img-user">
+                    <img src="assets/img/default.jpg" alt="">
+                  </div><!-- az-img-user -->
+                  <h6>{{ profResponds.username }}</h6>
+                  <span>{{ profResponds.email }}</span>
+                </div><!-- az-header-profile -->
+
+                <!-- <a href="javascript::void(0)" class="dropdown-item"><i class="typcn typcn-user-outline" routerLink="profile" *ngIf="loggedIn"></i> My Profile</a>
+                <a href="javascript::void(0)" class="dropdown-item" [routerLink]="['/profile']"><i class="typcn typcn-edit"></i> Edit Profile</a>
+                <a href="javascript::void(0)" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>
+                <a href="javascript::void(0)" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a> -->
+                <a href="javascript::void(0)" class="dropdown-item"  (click)=logout($event)  *ngIf="loggedIn"><i class="typcn typcn-power-outline"></i> Sign Out</a>
+              </div><!-- dropdown-menu -->
+            </div>
+          </div><!-- az-header-right -->
+        </div><!-- container -->
+      </div><!-- az-header -->
+
+        <div class="az-content" style="margin-top: -8px;">
+          <!-- <ngx-ui-loader [loaderId]="'loader-01'" [fgsColor]= "'#02A51D'"></ngx-ui-loader> -->
+          <router-outlet *ngIf="app != 'none'"></router-outlet>
+      <!--
+          <div class="az-footer ht-40">
+            <div class="container pd-t-0-f ht-100p">
+              <span>&copy; 2018 Heritage Bank</span>
+            </div>
+          </div> -->
+
+        </div>
+
+
+    </div>
+  </div>

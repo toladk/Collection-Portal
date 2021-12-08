@@ -1,0 +1,115 @@
+<div class="az-content-header d-block d-md-flex">
+  <div>
+    <h2 class="az-content-title tx-24 mg-b-5 mg-b-lg-8">Hi, welcome back!</h2>
+    <p class="mg-b-0">Your Calpay Transactions dashboard.</p>
+  </div>
+  <div class="az-dashboard-header-right">
+    <!-- <div>
+      <label class="tx-13">Customer Ratings</label>
+      <div class="az-star">
+        <i class="typcn typcn-star active"></i>
+        <i class="typcn typcn-star active"></i>
+        <i class="typcn typcn-star active"></i>
+        <i class="typcn typcn-star active"></i>
+        <i class="typcn typcn-star"></i>
+        <span>(12,775)</span>
+      </div>
+    </div> -->
+    <div>
+      <label class="tx-13">Total Student</label>
+      <h5>{{ allStudentCount }}</h5>
+    </div>
+    <div>
+      <label class="tx-13">Total Transactions</label>
+      <h5>{{ allPaymentSum | sum | currency:'NGN':'symbol-narrow'}} <span>({{ allPaymentsCount }})</span> </h5>
+    </div>
+  </div><!-- az-dashboard-header-right -->
+</div><!-- az-content-header -->
+
+<div class="az-content-body">
+  <div class="card card-dashboard-seven">
+
+    <div class="card-body">
+      <div class="row row-sm">
+        <div class="col-6 col-lg-3">
+          <label class="az-content-label">Total Approved</label>
+          <h2>{{ allApprovedPayment | sum | currency:'NGN':'symbol-narrow' }}</h2>
+          <div class="desc up">
+            <i class="icon ion-md-stats"></i>
+            <span><strong>0.00%</strong> ({{ allApprovedcount }} Payments)</span>
+          </div>
+        </div><!-- col -->
+
+        <div class="col-6 col-lg-3">
+          <label class="az-content-label">Total Partial</label>
+          <h2>{{ allPartialsum | sum | currency:'NGN':'symbol-narrow' }}</h2>
+          <div class="desc up">
+            <i class="icon ion-md-stats"></i>
+            <span><strong>0.00%</strong> ({{ allPartialcount }} Payments)</span>
+          </div>
+        </div><!-- col -->
+        <div class="col-6 col-lg-3 mg-t-20 mg-lg-t-0">
+          <label class="az-content-label">Total Pending</label>
+          <h2>{{ allPendingPayment | sum | currency:'NGN':'symbol-narrow' }}</h2>
+          <div class="desc down">
+            <i class="icon ion-md-stats"></i>
+            <span><strong>0.00%</strong> ({{ allPendingcount }} Payments)</span>
+          </div>
+        </div><!-- col -->
+
+        <div class="col-6 col-lg-3 mg-t-20 mg-lg-t-0">
+          <label class="az-content-label">Total Rejected</label>
+          <h2>{{ allRejectedsum | sum | currency:'NGN':'symbol-narrow' }}</h2>
+          <div class="desc up">
+            <i class="icon ion-md-stats"></i>
+            <span><strong>0.00%</strong> ({{ allRejectedcount }} Payments)</span>
+          </div>
+        </div><!-- col -->
+      </div><!-- row -->
+    </div><!-- card-body -->
+  </div><!-- card -->
+
+</div><!-- az-content-body -->
+
+
+<div class="az-content-body">
+  <div class="az-content mb-4 d-block d-md-flex mt-4">
+    <div >
+      <h2 class="az-content-title mg-b-5 mg-b-lg-8">All Transactions Quantity</h2>
+    </div>
+  </div><!-- az-content-header -->
+
+  <div class="row row-sm">
+    <div class="col-sm-6 col-lg-4 col-xl-6">
+      <div class="card card-body card-dashboard-fifteen">
+        <h1 class="mb-1">{{ allStudentCount }}</h1>
+        <label class="tx-purple">Total Students</label>
+        <span class="mb-4">The total number of <b>Students</b></span>
+      </div><!-- card -->
+    </div><!-- col -->
+    <div class="col-sm-6 col-lg-4 col-xl-6">
+      <div class="card card-body card-dashboard-fifteen">
+        <h1 class="mb-1">{{ allPendingcount }}</h1>
+        <label class="tx-success">Total Pending Payments</label>
+        <span class="mb-4">The total number of <b>Pending Payments</b></span>
+      </div><!-- card -->
+    </div><!-- col -->
+  </div><!-- row -->
+
+  <div class="row row-sm mt-4">
+    <div class="col-sm-6 col-lg-4 col-xl-6 mg-t-20 mg-sm-t-0">
+      <div class="card card-body card-dashboard-fifteen">
+        <h1 class="mb-1">{{ allApprovedcount }}</h1>
+        <label class="tx-primary">Total Approved Transactions</label>
+        <span class="mb-4">The total number of <b>Approved Transactions</b></span>
+      </div><!-- card -->
+    </div><!-- col -->
+    <div class="col-sm-6 col-lg-4 col-xl-6 mg-t-20 mg-sm-t-0">
+      <div class="card card-body card-dashboard-fifteen">
+        <h1 class="mb-1">{{ allPartialcount }}</h1>
+        <label class="tx-danger">Total Partial Transactions</label>
+        <span class="mb-4">The total number of <b>Total Partial Transactions</b></span>
+      </div><!-- card -->
+    </div><!-- col -->
+  </div><!-- row -->
+</div><!-- az-content-body -->

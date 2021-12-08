@@ -1,0 +1,85 @@
+<div class="az-content-header">
+    <div class="az-content-header-top">
+      <div>
+        <h2 class="az-content-title mg-b-5 mg-b-lg-8">Manage Teller!</h2>
+          <p class="mg-b-0">Manage All teller.</p>
+      </div>
+      <div class="az-dashboard-date">
+        <div class="date">
+          <button nz-button nzType="primary">Add Teller</button>
+        </div><!-- az-dashboard-date -->
+        <!-- <i class="icon ion-md-arrow-forward"></i> -->
+        <!-- <div class="date">
+          <button nz-button nzType="default">Existing Customer</button>
+        </div> -->
+      </div><!-- az-dashboard-date -->
+    </div><!-- az-content-body-title -->
+    <div class="nav-wrapper">
+      <nav class="nav az-nav-line">
+        <a href="javascript::void(0)" class="nav-link active">Overview</a>
+        <a href="javascript::void(0)" class="nav-link">All Teller</a>
+      </nav>
+    </div>
+  </div>
+  
+  
+  <div class="az-content-body">
+    <div class="az-content-label mg-b-5">All Teller</div>
+    <p class="mg-b-20">Pre Generated Teller.</p>
+    <!-- <div class="pd-30 pd-sm-40 bg-gray-100"> -->
+  
+      <nz-table #fixedTable [nzData]="listOfData" [nzScroll]="{ x: '700px', y: '340px' }">
+        <thead>
+          <tr>
+            <th>S/N</th>
+            <th nzLeft>Full Name</th>
+            <th nzLeft>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th nzRight>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of fixedTable.data; let r= index">
+            <td>{{ r+1 }}</td>
+            <td nzLeft>{{ data.name }}</td>
+            <td>{{ data.address }}</td>
+            <td>{{ data.age }}</td>
+            <td>{{ data.address }}</td>
+            <td nzRight>
+              <!-- <a href="#">Add Teller</a> -->
+              <button nz-button nzType="primary" (click)="open()">Activate</button>
+
+              <button nz-button nzType="primary" (click)="open()">Deactivate</button>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+  
+  
+      <nz-drawer
+      [nzBodyStyle]="{ overflow: 'auto' }"
+      [nzMaskClosable]="false"
+      [nzWidth]="720"
+      [nzVisible]="visible"
+      nzTitle="Create"
+      [nzFooter]="footerTpl"
+      (nzOnClose)="close()"
+    >
+     
+  
+      <ng-template #footerTpl>
+        <div style="float: right">
+          <button nz-button style="margin-right: 8px;" (click)="close()">Cancel</button>
+          <button nz-button nzType="primary" (click)="close()">Submit</button>
+        </div>
+      </ng-template>
+    </nz-drawer>
+  
+    <!-- </div> -->
+  </div><!-- az-content-body -->
+  
+  
+  
+  
+  
